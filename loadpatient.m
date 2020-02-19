@@ -1,5 +1,5 @@
 % datapath = "C:\Users\s_nor\OneDrive\Medical Imaging\Team Challenge\Part 2\data";
-% example path to data
+% example path to data.
 
 % patients = loadpatient(datapath, 1:16, ["tracts", "STIR", "DTI"]);
 % example usage. will break if load_nii has invalid names.
