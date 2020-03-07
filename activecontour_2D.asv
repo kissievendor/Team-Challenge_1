@@ -1,0 +1,31 @@
+% Load patients tracts and MIP
+datapath = "D:\TC data\data";
+patients = loadpatient(datapath, 1:16, ["tracts", "MIP"]);
+
+%%
+% select patient TODO: make this automatic/adaptable
+p_nr = 1;
+patient = patients(1);
+
+MIP = patient{1, 1}{1, 2}{2, 1};
+MIP = sliceselect(44, MIP);
+
+%%
+figure;
+imshow(MIP, []);
+title('Click (multiple) points on the nerve to serve as seeds points');
+%TODO: Prompt user to click on a specific nerve!
+
+% Use ginput to get coordinates
+% NOTE: [y,x] is corre
+[y,x]=ginput;
+x=round(x);
+y=round(y);
+
+mask = zeros(size(MIP));
+mask(x,y)=1; 
+
+bw = activecontour(MIP, mask, 20);
+
+figure,imshow(MIP,[])
+alphamask(bw, [0,0,1],0.5);
