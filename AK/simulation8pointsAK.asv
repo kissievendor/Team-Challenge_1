@@ -1,0 +1,19 @@
+datapath = "C:\Users\User\Documents\Medical_Imaging\Team_Challenge\TC_data\data";
+
+patients = loadpatient(datapath, 2, ["STIR", "tracts_C6R"]);
+
+mask = zeros(168,85,168);
+
+mask(95,51,76) = 1;
+mask(95,49:51,77) = 1;
+mask(95,
+
+tract = [
+51,76;
+49,77; 50,77; 51,77;
+49,78; 50,78; 51,78;
+48,79; 49,79; 50,79; 51,79;
+48,80; 49,80; 50,80;
+48,81; 49,81;
+48,82; 48,82;
+48,83]; 
