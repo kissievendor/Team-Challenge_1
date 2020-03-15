@@ -87,7 +87,7 @@ temp_c5 = per(:,:,roi_slice);
 for x = 1:168
 
 % we search for the brightest pixel in the rectangle
-
+    if (~isempty(mask_vertices{x}))
     g{x} = search(mask_vertices{x}, stir, x);
 
 % annemarie's code gives 8 points (T TR R BR B BL L TL)
@@ -97,6 +97,7 @@ for x = 1:168
 % 168 long arrays with 8 columns of vertices (1 by 2s)
     vert{x} = [v];
 % then Stan draws it as a 3D cylinder-like shape for presentation
+    end
 end 
 function [group] = search(start, stir, x)
     brightness = @(yz) stir(x,yz(1),yz(2));    
