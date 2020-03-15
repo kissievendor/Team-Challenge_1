@@ -1,6 +1,6 @@
 %% Load data
 
-datapath = "C:\Users\s_nor\OneDrive\Medical Imaging\Team Challenge\Part 2\data";
+datapath = "C:\Users\20194695\Documents\Team_Challenge\data";
 
 patients = loadpatient(datapath, 2, ["STIR", "tracts_C6R"]);
 
@@ -17,7 +17,11 @@ c = patients{1,2}{2,1};
 mask = c;
 mask_vertices = {};
 mask_vertices{168} = [];
-
+vert = {};
+vert{168} = [];
+g = {};
+g {168} = [];
+g = g.';
 %frontback_tracts = c5l(:,:,80)
 
 
@@ -79,17 +83,21 @@ imtool(per(:,:,roi_slice),[0 500])
 temp_c5 = per(:,:,roi_slice);
 
 %% Directional thresholding
+
+for x = 1:168
+
 % we search for the brightest pixel in the rectangle
 
-g = search(mask_vertices{roi_slice}, stir, roi_slice);
+    g{x} = search(mask_vertices{x}, stir, x);
 
 % annemarie's code gives 8 points (T TR R BR B BL L TL)
-v = points(g, mask_vertices{roi_slice});
+
+    v = points(g{x}, mask_vertices{x});
 
 % 168 long arrays with 8 columns of vertices (1 by 2s)
-
+    vert{x} = [v];
 % then Stan draws it as a 3D cylinder-like shape for presentation
-
+end 
 function [group] = search(start, stir, x)
     brightness = @(yz) stir(x,yz(1),yz(2));    
 
