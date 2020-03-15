@@ -78,9 +78,9 @@ roi_slice = 95;
 %roi = stir(:,:,81);
 %imshow(roi,[0,500]);
 per = permute(mask,[3 2 1]);
-imtool(per(:,:,roi_slice),[0 500])
-
-temp_c5 = per(:,:,roi_slice);
+% imtool(per(:,:,roi_slice),[0 500]);
+% 
+% temp_c5 = per(:,:,roi_slice);
 
 %% Directional thresholding
 
