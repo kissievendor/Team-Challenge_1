@@ -1,14 +1,26 @@
 % Load patients tracts and MIP
 datapath = "D:\TC data\data";
-patients = loadpatient(datapath, 1:16, ["tracts", "MIP"]);
+patients = loadpatient(datapath, 1:16, ["tracts", "MIP_or", "STIR_or"]);
 
 %%
 % select patient TODO: make this automatic/adaptable
 p_nr = 1;
+nerve = 'C5R';
+
 patient = patients(1);
 
 MIP = patient{1, 1}{1, 2}{2, 1};
-MIP = sliceselect(44, MIP);
+STIR = patient{1, 1}{1, 2}{3, 1};
+
+for i = 1:length(patients{1,1}{1,1})
+    if patients{1,1}{1,1}{i,1} == nerve
+        tract = patients{1,1}{1,1}{i,5};
+        tract = imresize3(tract,size(MIP),"nearest");
+        tract_name = strcat('tract_', nerve);
+        truediameter = mean(patient{1, 1}{1, 1}{i, 3}); % Change to correct nerve index
+        truearea = mean(patient{1,1}{1,1}{i,4});
+    end 
+end 
 
 %%
 figure;
