@@ -18,10 +18,10 @@ first_slice = squeeze(tract(:,slices(1),:));
 hlv = patch_size(1)/2;
 
 % Concatenate found slices in 3D array
-im = first_slice((y(1)-hlv):(y(1)+hlv-1), (x(1)-hlv):(x(1)+hlv-1));
+im = first_slice((x(1)-hlv):(x(1)+hlv-1), (y(1)-hlv):(y(1)+hlv-1));
 for idx = slices(2:end)
     slice = squeeze(tract(:,idx,:));
-    patch = slice((y(1)-hlv):(y(1)+hlv-1), (x(1)-hlv):(x(1)+hlv-1));
+    patch = slice((x(1)-hlv):(x(1)+hlv-1), (y(1)-hlv):(y(1)+hlv-1));
     im = cat(3,im,patch);
 end
 
