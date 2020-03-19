@@ -49,15 +49,15 @@ corners(4,:) = [maxy,minz];
 
 for m = 1:4
 
-    c = 2; % (incrementing) number of candidates for botleft voxel
-    % botleft can be part of group or a background voxel in bounding box
+    c = 2; % (incrementing) number of candidates for corner voxel
+    % corner can be part of group or a background voxel in bounding box
     [bool, loc] = ismember(corners(m,:),group, 'rows'); 
 
-    % botleft is part of group
+    % corner is part of group
     if bool == 1
         corners(m,:) = group(loc,:);
-    % botleft is not part of group,
-    % explore c = 2 voxels on diagonal next to botleft in bounding box, 
+    % corner is not part of group,
+    % explore c = 2 voxels on diagonal next to corner in bounding box, 
     % if these voxels are still not part of group, increment c and explore next
     % diagonal
     else  
@@ -66,11 +66,11 @@ for m = 1:4
             bool = zeros([c 1]); loc = zeros([c 1]); dis = [];
             counter = 0;
 
-            % find the coordinates of the candidates
+            % find the coordinates of the candidates with getcand function
             % check whether they are a part of the group
             % if so, calculate distance between candidate and start voxel
             for i = 1:c
-                [cand(i,1),cand(i,2)] = getcand(m,maxmins,c,i); % function at end of script
+                [cand(i,1),cand(i,2)] = getcand(m,maxmins,c,i); 
                 [bool(i), loc(i)] = ismember(cand(i,:),group,'rows');
                 if bool(i) == 1
                     counter = counter + 1;
@@ -85,14 +85,14 @@ for m = 1:4
                 c = c+1;
             end
 
-            % set botleft when only one candidate is part of group, leave while
+            % set corner when only one candidate is part of group, leave while
             % loop
             if size(dis,1) == 1
                 corners(m,:) = [dis(1,1),dis(1,2)];
                 break
             end
 
-            % set botleft to be the candidate closest to start voxel when 
+            % set corner to be the candidate closest to start voxel when 
             % multiple candidates are part of group, leave while loop
             if size(dis,1) > 1
                 [closest,index] = min(dis(:,3));
@@ -148,24 +148,4 @@ niftiwrite(pointsmask,"pointsmask");
 % look at slice x=95
 end
 
-%%
-function [y,z] = getcand(m, maxmins, c, i)
 
-% function to get the right candidate 
-% because the formula is different for the 4 different corners
-
-if m == 1
-    y = maxmins(1,4) + c - i;
-    z = maxmins(1,2) + i - 1;
-elseif m == 2
-    y = maxmins(1,4) + i - 1;
-    z = maxmins(1,1) - c + i;
-elseif m == 3
-    y = maxmins(1,3) - i + 1;
-    z = maxmins(1,1) - c + i;
-elseif m == 4
-    y = maxmins(1,3) - c + i;
-    z = maxmins(1,2) + i - 1;
-end
-
-end
