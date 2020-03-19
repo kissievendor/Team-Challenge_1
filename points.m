@@ -116,33 +116,33 @@ vertices = [top;topright;right;botright;bot;botleft;left;topleft];
 %% MASK (not to hand in but for ourselves to take a look at the vertices in ITK-SNAP)
 
    
-datapath = "C:\Users\User\Documents\Medical_Imaging\Team_Challenge\TC_data\data";
-
-patients = loadpatient(datapath, 2, ["STIR", "tracts_C6R"]);
-
-mask = zeros(168,85,168);
-mask(95,51,76) = 1;
-mask(95,49:51,77) = 1;
-mask(95,49:51,78) = 1;
-mask(95,48:51,79) = 1;
-mask(95,48:50,80) = 1;
-mask(95,48:49,81) = 1;
-mask(95,48:49,82) =1;
-mask(95,48,83) = 1;
-
-stir = patients{1,2}{1,1};
-nerve = stir .* mask;
-niftiwrite(nerve,"nerve");
-
-per = permute(nerve,[3 2 1]);
-imtool(per(:,:,95),[0 137]);
-
-pointsmask = zeros(168,85,168);
-for i=1:8
-    pointsmask(95,vertices(i,1),vertices(i,2)) = 1;
-end
-
-niftiwrite(pointsmask,"pointsmask");
+% datapath = "C:\Users\User\Documents\Medical_Imaging\Team_Challenge\TC_data\data";
+% 
+% patients = loadpatient(datapath, 2, ["STIR", "tracts_C6R"]);
+% 
+% mask = zeros(168,85,168);
+% mask(95,51,76) = 1;
+% mask(95,49:51,77) = 1;
+% mask(95,49:51,78) = 1;
+% mask(95,48:51,79) = 1;
+% mask(95,48:50,80) = 1;
+% mask(95,48:49,81) = 1;
+% mask(95,48:49,82) =1;
+% mask(95,48,83) = 1;
+% 
+% stir = patients{1,2}{1,1};
+% nerve = stir .* mask;
+% niftiwrite(nerve,"nerve");
+% 
+% per = permute(nerve,[3 2 1]);
+% imtool(per(:,:,95),[0 137]);
+% 
+% pointsmask = zeros(168,85,168);
+% for i=1:8
+%     pointsmask(95,vertices(i,1),vertices(i,2)) = 1;
+% end
+% 
+% niftiwrite(pointsmask,"pointsmask");
 
 % to view in ITK-SNAP, open nerve.nii and mask with pointsmask.nii
 % look at slice x=95
