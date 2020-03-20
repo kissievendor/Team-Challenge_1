@@ -18,7 +18,7 @@ patstruct = struct([]);
 tracts = ["C5L" "C5R" "C6L" "C6R" "C7L" "C7R"];
 
 for i = 2:length(tracts)
-    [trueMin, calcMin, trueMax, calcMax] = activecontouring(patient, tracts(i));
+    [trueMin, calcMin, trueMax, calcMax, med] = activecontouring(patient, tracts(i));
     patstruct{i,1}=tracts(i);
     patstruct{1,1}=strcat("patient_",string(p_nr));
     patstruct{1,2}='trueMin';
@@ -29,11 +29,13 @@ for i = 2:length(tracts)
     patstruct{i,4}=trueMax;
     patstruct{1,5}='calcMax';
     patstruct{i,5}=calcMax;
+    patstruct{1,6}='median';
+    patstruct{i,6}=med;
 end
 end
 
 %%
-function [trueMin, calcMin, trueMax, calcMax] = activecontouring(patient,nerve)
+function [trueMin, calcMin, trueMax, calcMax,mediandiam] = activecontouring(patient,nerve)
 MIP = patient{1, 1}{1, 2}{2, 1};
 for i = 1:length(patient{1,1}{1,1})
     if patient{1,1}{1,1}{i,1} == nerve
@@ -55,10 +57,12 @@ if slice~=0
         warning('multiple components in bw')
         calcMin = NaN;
         calcMax = NaN;
+        mediandiam=NaN;
     else
         J = imrotate(bw,stats.Orientation); %Turn the nerve so it is straight
         summed = sum(J==1,2); %sum over all every row to get number of pixels per row
         maxdiam = max(summed);  % max diameter
+        mediandiam = median(summed(summed>0));
         calcMax = maxdiam*pixdim(1);
         mindiam = min(summed(summed>0)); % min diameter
         calcMin = mindiam*pixdim(1);
@@ -66,5 +70,7 @@ if slice~=0
 else
     calcMin = NaN;
     calcMax = NaN;
+    mediandiam=NaN;
+
 end
 end
