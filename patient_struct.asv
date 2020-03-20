@@ -3,7 +3,6 @@ datapath = "D:\TC data\data";
 patients = loadpatient(datapath, 1:16, ["tracts", "MIP"]);
 
 %%
-clear i patstruct finalstruct
 finalstruct = struct([]);
 for i=1:length(patients)
     patstruct = create_struct(patients,i);
@@ -47,24 +46,19 @@ end
 [tract_slice, slice] = defineROI(tract);
 if slice~=0
     MIP_slice = squeeze(MIP(:,slice,:));
-    bw = activecontour(MIP_slice, tract_slice, 20);
-
-    pixdim = [2,1,2]; %for low resolution
-    stats = regionprops(bw, 'Orientation','MinorAxisLength');
-    if size(stats,1)>1
-        warning('multiple components in bw')
-        calcMin = NaN;
-        calcMax = NaN;
-    else
-        J = imrotate(bw,stats.Orientation); %Turn the nerve so it is straight
-        summed = sum(J==1,2); %sum over all every row to get number of pixels per row
-        maxdiam = max(summed);  % max diameter
-        calcMax = maxdiam*pixdim(1);
-        mindiam = min(summed(summed>0)); % min diameter
-        calcMin = mindiam*pixdim(1);
-    end
 else
     calcMin = NaN;
     calcMax = NaN;
-end
+    
+bw = activecontour(MIP_slice, tract_slice, 20);
+
+pixdim = [2,1,2]; %for low resolution
+stats = regionprops(bw, 'Orientation','MinorAxisLength');
+
+J = imrotate(bw,stats.Orientation); %Turn the nerve so it is straight
+summed = sum(J==1,2); %sum over all every row to get number of pixels per row
+maxdiam = max(summed);  % max diameter
+calcMax = maxdiam*pixdim(1);
+mindiam = min(summed(summed>0)); % min diameter
+calcMin = mindiam*pixdim(1);
 end
