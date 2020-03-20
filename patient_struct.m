@@ -18,24 +18,26 @@ patstruct = struct([]);
 tracts = ["C5L" "C5R" "C6L" "C6R" "C7L" "C7R"];
 
 for i = 2:length(tracts)
-    [trueMin, calcMin, trueMax, calcMax, med] = activecontouring(patient, tracts(i));
+    [trueMin, calcMin, trueMax, calcMax, top, bottom] = activecontouring(patient, tracts(i));
     patstruct{i,1}=tracts(i);
     patstruct{1,1}=strcat("patient_",string(p_nr));
     patstruct{1,2}='trueMin';
     patstruct{i,2}=trueMin;
     patstruct{1,3}='calcMin';
     patstruct{i,3}=calcMin;
-    patstruct{1,4}='trueMax';
-    patstruct{i,4}=trueMax;
-    patstruct{1,5}='calcMax';
-    patstruct{i,5}=calcMax;
-    patstruct{1,6}='median';
-    patstruct{i,6}=med;
+    patstruct{1,4}='bottom median';
+    patstruct{i,4}=bottom;
+    patstruct{1,5}='trueMax';
+    patstruct{i,5}=trueMax;
+    patstruct{1,6}='calcMax';
+    patstruct{i,6}=calcMax;  
+    patstruct{1,7}='top median';
+    patstruct{i,7}=top;
 end
 end
 
 %%
-function [trueMin, calcMin, trueMax, calcMax,mediandiam] = activecontouring(patient,nerve)
+function [trueMin, calcMin, trueMax, calcMax, top, bottom] = activecontouring(patient,nerve)
 MIP = patient{1, 1}{1, 2}{2, 1};
 for i = 1:length(patient{1,1}{1,1})
     if patient{1,1}{1,1}{i,1} == nerve
@@ -57,20 +59,35 @@ if slice~=0
         warning('multiple components in bw')
         calcMin = NaN;
         calcMax = NaN;
-        mediandiam=NaN;
+        top=NaN;
+        bottom=NaN;
     else
         J = imrotate(bw,stats.Orientation); %Turn the nerve so it is straight
         summed = sum(J==1,2); %sum over all every row to get number of pixels per row
         maxdiam = max(summed);  % max diameter
-        mediandiam = median(summed(summed>0));
         calcMax = maxdiam*pixdim(1);
         mindiam = min(summed(summed>0)); % min diameter
         calcMin = mindiam*pixdim(1);
+        
+        %top and bottem
+        nervesum = summed(summed>0);
+        n = ceil(numel(nervesum)/2);
+        top = nervesum(1:n);
+        top = median(sort(top));
+        bottom = nervesum(n+1:end);
+        bottom = median(sort(bottom));
+        if top < bottom
+            temp = top;
+            top = bottom;
+            bottom = temp;
+        end
+        
     end
 else
     calcMin = NaN;
     calcMax = NaN;
-    mediandiam=NaN;
+    top=NaN;
+    bottom=NaN;
 
 end
 end
