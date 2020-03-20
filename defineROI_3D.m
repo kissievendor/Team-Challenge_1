@@ -1,4 +1,4 @@
-function [im, slices] = defineROI_3D(tract, patch_size)
+function [im, slices] = defineROI_3D(tract)
 % Creates 3D patches around the nerve of interest. 
 patch_size = [32,32];
 
