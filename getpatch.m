@@ -1,5 +1,8 @@
 function [patch] = getpatch(image, mask)
 % Get coordinates of tract 
+
+% Misschien andere naam kiezen
+% Ones is ook een functie in MATLAB!!
 ones = [];
 for x = 1:168
     for y = 1:85
