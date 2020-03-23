@@ -1,9 +1,9 @@
 %% Load data
 
-%datapath = "C:\Users\s_nor\OneDrive\Medical Imaging\Team Challenge\Part 2\data";
-datapath = "C:\Users\User\Documents\Medical_Imaging\Team_Challenge\TC_data\data";
+datapath = "C:\Users\s_nor\OneDrive\Medical Imaging\Team Challenge\Part 2\data";
+%datapath = "C:\Users\User\Documents\Medical_Imaging\Team_Challenge\TC_data\data";
 
-patients = loadpatient(datapath, 2, ["STIR", "tracts_C6R"]);
+patients = loadpatient(datapath, 4, ["STIR", "tracts_C6R"]);
 
 stir = patients{1,2}{1,1};
 mask = patients{1,2}{2,1};
@@ -50,13 +50,12 @@ mask = stir .* mask;
 %% Obtaining points
 
 p = {};
-%p{168+1} = [];
 groups = {}; 
 for x = 1:168
     p{x} = [];
     groups{x} = [];
     mx = mask_vertices{x};
-    if (x <= 168 && ~isempty(mx))
+    if (~isempty(mx))
         groups{x} = search(mx,mask,x);
         p{x} = points(groups{x}, mx);
     end
@@ -69,7 +68,7 @@ vy = [];
 vz = [];
 ca = [];
 
-for x = 1:168
+for x = 1:168-1
     x2 = x + 1;    
     if (~isempty(p{x}))
         ca = [ca [x;mean(p{x}(:,1)); mean(p{x}(:,2))]];        
