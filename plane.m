@@ -29,34 +29,9 @@ for x = 1:168-1
     end
 end
 
-% caps
-% x = ca(1,1);
-% nerve.vertices = [nerve.vertices; ca(:,1)'];
-% for i=1:8    
-%     nerve.vertices = [nerve.vertices; [x, p{x}(i,1), p{x}(i,2)]];
-%     if (i == 8)
-%         j = face+1;
-%     else
-%         j = face+i+1;
-%     end
-%     nerve.faces = [nerve.faces; [face, face+i, j]];
-% end
-% 
-% face = face + 9;
-% x = ca(1,end);
-% nerve.vertices = [nerve.vertices; ca(:,end)'];
-% for i=1:8    
-%     nerve.vertices = [nerve.vertices; [x, p{x}(i,1), p{x}(i,2)]];
-%     if (i == 8)
-%         j = face+1;
-%     else
-%         j = face+i+1;
-%     end
-%     nerve.faces = [nerve.faces; [face, face+i, j]];
-% end
-
-
 [center, pl] = plaane(ca);
+% SurfaceIntersection has been edited for errors, a fresh copy off the
+% internet will not work!
 [~, result] = SurfaceIntersection(pl, nerve);
 result_size = size(result.vertices,1);
 
@@ -79,10 +54,10 @@ end
 
 hold on;
 axis equal
-% trisurf(nerve.faces, nerve.vertices(:,1),nerve.vertices(:,2),nerve.vertices(:,3),'FaceAlpha', 0.5, 'FaceColor', 'r');
-% trisurf(pl.faces, pl.vertices(:,1),pl.vertices(:,2),pl.vertices(:,3),'FaceAlpha', 0.5, 'FaceColor', 'b');
-trisurf(final.faces, final.vertices(:,1),final.vertices(:,2),final.vertices(:,3),'FaceAlpha', 0.5, 'FaceColor', 'r');
-plot3(ca(1,:),ca(2,:),ca(3,:));
+trisurf(nerve.faces, nerve.vertices(:,1),nerve.vertices(:,2),nerve.vertices(:,3),'FaceAlpha', 0.5, 'FaceColor', 'r');
+trisurf(pl.faces, pl.vertices(:,1),pl.vertices(:,2),pl.vertices(:,3),'FaceAlpha', 0.25, 'FaceColor', 'b');
+trisurf(final.faces, final.vertices(:,1),final.vertices(:,2),final.vertices(:,3),'FaceAlpha', 1, 'FaceColor', 'yellow');
+plot3(ca(1,:),ca(2,:),ca(3,:), 'w');
 title ('Three test surfaces')
 view([3 1 1])
 hold off;
