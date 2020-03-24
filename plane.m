@@ -92,6 +92,21 @@ hold off;
 % axis equal
 % hold on;
 
+%%  find the area of the intersection plane
+%   and convert to mm^2
+
+totarea = 0;
+for n = 1:size(final.faces,1)
+    ID = [final.faces(i,1),final.faces(i,2),final.faces(i,3)];
+    tp = [final.vertices(ID(1),1:3); 
+          final.vertices(ID(2),1:3); 
+          final.vertices(ID(3),1:3)];
+    triarea = 1/2*norm(cross(tp(2,1:3)-tp(1,1:3),tp(3,1:3)-tp(1,1:3)));
+    totarea = totarea + triarea;
+end
+
+area = totarea*2*2; 
+
 function [center, plane] = plaane(ca)
 
 totdis = 0; distances = [];
@@ -171,6 +186,7 @@ plane.faces = [3,1,2;3,2,5;3,5,4;3,4,1];
 
 end
 % surf(X,Y,Z)
+
 
 %%  find the intersection of plane and nerve
 
