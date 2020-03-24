@@ -1,4 +1,5 @@
-%% construct nerve
+%%  find 1 cm in ca-direction
+%   which is the actual 1 cm mark of the nerve
 
 nerve.vertices = [];
 nerve.faces = [];
@@ -28,18 +29,10 @@ for x = 1:168-1
     end
 end
 
-%% get the plane
-
 [center, pl] = plaane(ca);
-
-%% calculate the intersection between nerve and plane
 % SurfaceIntersection has been edited for errors, a fresh copy off the
 % internet will not work!
-
 [~, result] = SurfaceIntersection(pl, nerve);
-
-%% filter out NaN results
-
 result_size = size(result.vertices,1);
 
 for v=1:result_size
@@ -59,6 +52,21 @@ for v=1:size(result.edges,1)
     end    
 end
 
+hold on;
+axis equal
+trisurf(nerve.faces, nerve.vertices(:,1),nerve.vertices(:,2),nerve.vertices(:,3),'FaceAlpha', 0.5, 'FaceColor', 'r');
+trisurf(pl.faces, pl.vertices(:,1),pl.vertices(:,2),pl.vertices(:,3),'FaceAlpha', 0.25, 'FaceColor', 'b');
+trisurf(final.faces, final.vertices(:,1),final.vertices(:,2),final.vertices(:,3),'FaceAlpha', 1, 'FaceColor', 'yellow');
+plot3(ca(1,:),ca(2,:),ca(3,:), 'w');
+title ('Three test surfaces')
+view([3 1 1])
+hold off;
+
+% figure
+% fill3(vx,vy,vz,'r')
+% axis equal
+% hold on;
+
 %%  find the area of the intersection plane
 %   and convert to mm^2
 
@@ -74,21 +82,7 @@ end
 
 area = totarea*2*2; 
 
-%% plot
-
-hold on;
-axis equal
-trisurf(nerve.faces, nerve.vertices(:,1),nerve.vertices(:,2),nerve.vertices(:,3),'FaceAlpha', 0.5, 'FaceColor', 'r');
-trisurf(pl.faces, pl.vertices(:,1),pl.vertices(:,2),pl.vertices(:,3),'FaceAlpha', 0.25, 'FaceColor', 'b');
-trisurf(final.faces, final.vertices(:,1),final.vertices(:,2),final.vertices(:,3),'FaceAlpha', 1, 'FaceColor', 'yellow');
-plot3(ca(1,:),ca(2,:),ca(3,:), 'w');
-title ('Three test surfaces')
-view([3 1 1])
-hold off;
-
 function [center, plane] = plaane(ca)
-%%  find 1 cm in ca-direction
-%   which is the actual 1 cm mark of the nerve
 
 totdis = 0; distances = [];
 for i=1:7
@@ -166,4 +160,17 @@ end
 plane.faces = [3,1,2;3,2,5;3,5,4;3,4,1];
 
 end
+% surf(X,Y,Z)
 
+
+%%  find the intersection of plane and nerve
+
+% A = vx; B = vy; C = vz;
+% figure
+% % fill3(vx,vy,vz,'r')
+% axis equal
+% % hold on;
+% plot3(ca(1,:),ca(2,:),ca(3,:));
+% surf(A,B,C)
+
+%%  plot the plane
