@@ -1,9 +1,12 @@
-function [group] = search(start, stir, x)
+function [group] = search(start, stir, x, th)
+    %SEARCH Summary of this function goes here
+    %   Detailed explanation goes here
+        
     brightness = @(yz) stir(x,yz(1),yz(2));
 
     group = start;
 
-    threshold = brightness(start) * 0.5;
+    threshold = brightness(start) * th;
 
     step(start + [1,0]);   
     step(start + [0,1]);
