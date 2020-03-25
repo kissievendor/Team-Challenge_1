@@ -64,9 +64,9 @@ if slice~=0
     else
         J = imrotate(bw,stats.Orientation); %Turn the nerve so it is straight
         summed = sum(J==1,2); %sum over all every row to get number of pixels per row
-        maxdiam = max(summed)*pixdim(1);  % max diameter
+        maxdiam = max(summed);  % max diameter
         calcMax = maxdiam*pixdim(1);
-        mindiam = min(summed(summed>0))*pixdim(1); % min diameter
+        mindiam = min(summed(summed>0)); % min diameter
         calcMin = mindiam*pixdim(1);
         
         %top and bottem
