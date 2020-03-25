@@ -4,30 +4,13 @@ patients = loadpatient(datapath, 1:36, ["tracts", "MIP"]);
 
 %%
 clear i patstruct finalstruct
-ALS_index = [1, 4, 8, 9, 10, 15, 21, 22, 23, 27, 29, 30, 31, 35, 36];
-MMN_index = [2, 3, 5, 6, 7, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 28, 32, 33];
-
 finalstruct = struct([]);
-ALS = struct([]);
-MMN = struct([]);
-
-%separate counter for ALS / MMN
-count_ALS = 1;
-count_MMN = 1;
+ALS = struct();
+MMN = struct
 for i=1:length(patients)
-
     patstruct = create_struct(patients,i);
     finalstruct{i,1}=patstruct;
-    
-    if ismember(i, ALS_index)
-        ALS{count_ALS,1}=patstruct;
-        count_ALS = count_ALS+1;
-    elseif ismember(i, MMN_index)
-        MMN{count_MMN,1}=patstruct;
-        count_MMN = count_MMN+1;
-    end
 end
-       
 
 %% process nerves
 function [patstruct] = create_struct(patients,p_nr)
