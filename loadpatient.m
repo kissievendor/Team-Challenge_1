@@ -62,7 +62,7 @@ function [output] = loadpatient(datapath, patients, load_nii)
         switch type
             case 'nifti'
                 t = NaN;
-                if (isfile(path + ".nii") || isfile(path + ".gz"))
+                if (isfile(path + ".nii") || isfile(path + ".nii.gz"))
                     t = niftiread(path);
                 end
             case 'coors'

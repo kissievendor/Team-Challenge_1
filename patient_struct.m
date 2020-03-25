@@ -4,14 +4,17 @@ patients = loadpatient(datapath, 1:36, ["tracts", "MIP"]);
 
 %%
 clear i patstruct finalstruct
+
+%Patient indexes for ALS and MMN
 ALS_index = [1, 4, 8, 9, 10, 15, 21, 22, 23, 27, 29, 30, 31, 35, 36];
 MMN_index = [2, 3, 5, 6, 7, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 28, 32, 33];
 
+%Create 3 structs to store calculations per patient per group (and total)
 finalstruct = struct([]);
 ALS = struct([]);
 MMN = struct([]);
 
-%separate counter for ALS / MMN
+%separate counter for ALS / MMN for struct indexing
 count_ALS = 1;
 count_MMN = 1;
 for i=1:length(patients)
@@ -31,56 +34,83 @@ end
 
 %% process nerves
 function [patstruct] = create_struct(patients,p_nr)
+%Processes all nerves of one patients and stores is in a patient struct
 patient = patients(p_nr);
 patstruct = struct([]);
 
 tracts = ["C5L" "C5R" "C6L" "C6R" "C7L" "C7R"];
 
 for i = 1:length(tracts)
-    [trueMin, calcMin, trueMax, calcMax, top, bottom] = activecontouring(patient, tracts(i));
+    [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm, top, bottom] = activecontouring(patient, tracts(i));
     patstruct{i+1,1}=tracts(i);
     patstruct{1,1}=strcat("patient_",string(p_nr));
-    patstruct{1,2}='trueMin';
-    patstruct{i+1,2}=trueMin;
+    patstruct{1,2}='Just after ganlion';
+    patstruct{i+1,2}=afterGanglion;
     patstruct{1,3}='calcMin';
-    patstruct{i+1,3}=calcMin;
+    patstruct{i+1,3}=calcAG;
     patstruct{1,4}='bottom median';
     patstruct{i+1,4}=bottom;
-    patstruct{1,5}='trueMax';
-    patstruct{i+1,5}=trueMax;
+    patstruct{1,5}='1cm after ganglion';
+    patstruct{i+1,5}=afterGanglion_1cm;
     patstruct{1,6}='calcMax';
-    patstruct{i+1,6}=calcMax;  
+    patstruct{i+1,6}=calcAG_1cm;  
     patstruct{1,7}='top median';
     patstruct{i+1,7}=top;
 end
 end
 
-%%
-function [trueMin, calcMin, trueMax, calcMax, top, bottom] = activecontouring(patient,nerve)
+%% activecontouring
+function [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm, top, bottom] = activecontouring(patient,nerve)
+%Do the active contouring of one nerve
+%Outputs:
+% - afterGanglion: measured diameter just after ganglion
+% - calcAG: calculated diameter just after ganglion (location by estimation)
+% - afterGanglion_1cm: measured diameter 1cm after ganglion
+% - calcAG_1cm: calculated diameter 1cm after ganglion (location by
+% estimation)
+
 MIP = patient{1, 1}{1, 2}{2, 1};
 for i = 1:length(patient{1,1}{1,1})
     if patient{1,1}{1,1}{i,1} == nerve
         tract = patient{1,1}{1,1}{i,5};
-        %diameter and area measurements
-        trueMax = patient{1,1}{1,1}{i,3}(1);
-        trueMin = patient{1,1}{1,1}{i,3}(2);
+        
+        %diameter measurements
+        afterGanglion = patient{1,1}{1,1}{i,3}(1);
+        afterGanglion_1cm = patient{1,1}{1,1}{i,3}(2);
     end 
 end 
 
+%define region of interest for activecontouring
 [tract_slice, slice] = defineROI(tract);
 if slice~=0
     MIP_slice = squeeze(MIP(:,slice,:));
     bw = activecontour(MIP_slice, tract_slice, 20);
 
     pixdim = [2,2,2]; %for low resolution
-    stats = regionprops(bw, 'Orientation','MinorAxisLength');
-    if size(stats,1)>1
+    
+    %check for single pixels in image and remove
+    cc = bwconncomp(bw,4);
+    if cc.NumObjects>1
         warning('multiple components in bw')
-        calcMin = NaN;
-        calcMax = NaN;
+        %remove small components from image (one or two pixels)
+        S = regionprops(cc, 'Area');
+        L = labelmatrix(cc);
+        bw = ismember(L, find([S.Area] > 2));
+        cc = bwconncomp(bw,4);
+        if cc.NumObjects==1
+            disp("problem solved");
+        end
+    end
+    
+    if cc.NumObjects>1
+        warning('Still too much components: check segmentaion')
+        calcAG = NaN;
+        calcAG_1cm = NaN;
         top=NaN;
         bottom=NaN;
+
     else
+        stats = regionprops(bw, 'Orientation');
         J = imrotate(bw,stats.Orientation); %Turn the nerve so it is straight
         summed = sum(J==1,2); %sum over all every row to get number of pixels per row
         
@@ -91,6 +121,7 @@ if slice~=0
         top = median(sort(top));
         bottom = nervesum(n+1:end);
         bottom = median(sort(bottom));
+        
         if top < bottom %rotate and do again
             J = imrotate(J, 180);
             summed = sum(J==1,2);
@@ -103,16 +134,15 @@ if slice~=0
         top = median(sort(top))*pixdim(1);
         bottom = nervesum(n+1:end);
         bottom = median(sort(bottom))*pixdim(1);
-        
+
         maxdiam = max(nervesum);  % max diameter
-        calcMax = maxdiam*pixdim(1);
+        calcAG_1cm = maxdiam*pixdim(1);
         mindiam = min(nervesum); % min diameter
-        calcMin = mindiam*pixdim(1);
-        
+        calcAG = mindiam*pixdim(1);
     end
 else
-    calcMin = NaN;
-    calcMax = NaN;
+    calcAG = NaN;
+    calcAG_1cm = NaN;
     top=NaN;
     bottom=NaN;
 
