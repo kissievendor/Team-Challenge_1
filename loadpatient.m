@@ -13,9 +13,7 @@
 % the second cell is a 1x3 cell containing columns with:
 % tracts.nii | STIR.nii | DTI.nii
 
-loadpatieent(datapath, 1:36, ["tracts", "STIR", "DTI", "MIP"])
-
-function [output] = loadpatieent(datapath, patients, load_nii)
+function [output] = loadpatient(datapath, patients, load_nii)
     output = cell(length(patients),1);
     j = 1;    
       
