@@ -21,7 +21,7 @@ function [output] = loadpatient(datapath, patients, load_nii)
         patient = num2str(p,'%03.f');
         
         tracts = false;
-        nii = cell(length(load_nii),1);        
+        nii = cell(length(load_nii),1);       
         i = 1;
         for n = load_nii 
             if n == "tracts"
