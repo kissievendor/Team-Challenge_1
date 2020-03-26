@@ -27,8 +27,8 @@ function [output] = loadpatient(datapath, patients, load_nii)
             if n == "tracts"
                 tracts = true;
             end
-                
-            nii{i,1} = niftiread(datapath + "\" + patient + "_" + n); 
+            
+            nii{i,1} = readfile(datapath + "\" + patient + "_" + n, 'nifti'); 
             i = i + 1;
         end
 
@@ -36,8 +36,8 @@ function [output] = loadpatient(datapath, patients, load_nii)
 
         measurements_opts = delimitedTextImportOptions("NumVariables", 1, "Delimiter", ",", "VariableTypes", "double");
 
-        diameters = table2array(readtable(datapath + "\" + patient + "_diameter.txt", measurements_opts));
-        areas = table2array(readtable(datapath + "\" + patient + "_area.txt", measurements_opts));
+        diameters = table2array(readfile(datapath + "\" + patient + "_diameter", 'measurement', measurements_opts));
+        areas = table2array(readfile(datapath + "\" + patient + "_area", 'measurement', measurements_opts));
 
         coors_opts = delimitedTextImportOptions("NumVariables", 3, "Delimiter", "\t");
 
@@ -45,11 +45,11 @@ function [output] = loadpatient(datapath, patients, load_nii)
         nerves = cell(length(nerve_names), 4);
         for nerve = nerve_names   
             nerves{i,1} = nerve;
-            nerves{i,2} = cellfun(@str2double,table2cell(readtable(datapath + "\" + patient + "_coors_" + nerve + ".txt", coors_opts)));
+            nerves{i,2} = cellfun(@str2double,table2cell(readfile(datapath + "\" + patient + "_coors_" + nerve, 'coors', coors_opts)));
             nerves{i,3} = [diameters(i+i-1), diameters(i+i)];
             nerves{i,4} = [areas(i+i-1), areas(i+i)];
             if tracts
-                nerves{i,5} = niftiread(datapath + "\" + patient + "_tracts_" + nerve); 
+                nerves{i,5} = readfile(datapath + "\" + patient + "_tracts_" + nerve, 'nifti'); 
             end
             i = i + 1;
         end
@@ -58,8 +58,24 @@ function [output] = loadpatient(datapath, patients, load_nii)
         j = j + 1;
     end
     
-    if length(output) <= 1
-        output = output{1};
+    function t = readfile(path, type, opts)
+        switch type
+            case 'nifti'
+                t = NaN;
+                if (isfile(path + ".nii") || isfile(path + ".gz"))
+                    t = niftiread(path);
+                end
+            case 'coors'
+                t = table(NaN(8,1),NaN(8,1),NaN(8,1));
+                if (isfile(path + ".txt"))
+                    t = readtable(path, opts);
+                end
+            case 'measurement'
+                t = table(NaN(12,1));
+                if (isfile(path + ".txt"))
+                    t = readtable(path, opts);
+                end
+        end
     end
 end
 
