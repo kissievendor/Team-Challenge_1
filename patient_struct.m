@@ -41,26 +41,26 @@ patstruct = struct([]);
 tracts = ["C5L" "C5R" "C6L" "C6R" "C7L" "C7R"];
 
 for i = 1:length(tracts)
-    [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm, top, bottom] = activecontouring(patient, tracts(i));
+    [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm] = activecontouring(patient, tracts(i));
     patstruct{i+1,1}=tracts(i);
     patstruct{1,1}=strcat("patient_",string(p_nr));
-    patstruct{1,2}='Just after ganlion';
+    patstruct{1,2}='Just after ganglion';
     patstruct{i+1,2}=afterGanglion;
-    patstruct{1,3}='calcMin';
+    patstruct{1,3}='calc just after ganglion';
     patstruct{i+1,3}=calcAG;
-    patstruct{1,4}='bottom median';
-    patstruct{i+1,4}=bottom;
+    patstruct{1,4}='percentage off';
+    patstruct{i+1,4}=abs(1-calcAG/afterGanglion)*100;
     patstruct{1,5}='1cm after ganglion';
     patstruct{i+1,5}=afterGanglion_1cm;
-    patstruct{1,6}='calcMax';
+    patstruct{1,6}='calc 1cm after ganglion';
     patstruct{i+1,6}=calcAG_1cm;  
-    patstruct{1,7}='top median';
-    patstruct{i+1,7}=top;
+    patstruct{1,7}='percentage off';
+    patstruct{i+1,7}=abs(1-calcAG_1cm/afterGanglion_1cm)*100;
 end
 end
 
 %% activecontouring
-function [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm, top, bottom] = activecontouring(patient,nerve)
+function [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm] = activecontouring(patient,nerve)
 %Do the active contouring of one nerve
 %Outputs:
 % - afterGanglion: measured diameter just after ganglion
@@ -103,48 +103,45 @@ if slice~=0
     end
     
     if cc.NumObjects>1
-        warning('Still too much components: check segmentaion')
+        warning('Still too many components: check segmentation')
         calcAG = NaN;
         calcAG_1cm = NaN;
-        top=NaN;
-        bottom=NaN;
-
     else
         stats = regionprops(bw, 'Orientation');
         J = imrotate(bw,stats.Orientation); %Turn the nerve so it is straight
         summed = sum(J==1,2); %sum over all every row to get number of pixels per row
-        
-        %top and bottem
         nervesum = summed(summed>0);
         n = ceil(numel(nervesum)/2);
-        top = nervesum(1:n);
-        top = median(sort(top));
-        bottom = nervesum(n+1:end);
-        bottom = median(sort(bottom));
         
-        if top < bottom %rotate and do again
-            J = imrotate(J, 180);
-            summed = sum(J==1,2);
-            nervesum = summed(summed>0);
+        %which is most likely to be ganglion? thickest part
+        %then take width of end of the nerve (aprox. 1cm after ganglion)
+        %take width 5 pixels(1cm) upwards (aprox. after ganglion)
+        top = nervesum(1:n);
+        top = mean(sort(top));
+        bottom = nervesum(n+1:end);
+        bottom = mean(sort(bottom));
+        
+        if length(nervesum) < 6 %so shorter than 1cm
+            warning('nerve shorter than 1cm')
+            calcAG = NaN;
+            calcAG_1cm = NaN;
+        
+        elseif top < bottom
+            calcAG_1cm = nervesum(1)*pixdim(1); %closer to ganglion
+            calcAG = nervesum(6)*pixdim(1);
+            
+        elseif top > bottom
+            nervesum = flipud(nervesum);
+            calcAG_1cm = nervesum(1)*pixdim(1); %closer to ganglion
+            calcAG = nervesum(6)*pixdim(1);
+        else
+            warning('ganglion location inconclusive')
+            calcAG = NaN;
+            calcAG_1cm = NaN;
         end
-        
-        %delete top row
-        nervesum = nervesum(3:end);
-        top = nervesum(1:n);
-        top = median(sort(top))*pixdim(1);
-        bottom = nervesum(n+1:end);
-        bottom = median(sort(bottom))*pixdim(1);
-
-        maxdiam = max(nervesum);  % max diameter
-        calcAG_1cm = maxdiam*pixdim(1);
-        mindiam = min(nervesum); % min diameter
-        calcAG = mindiam*pixdim(1);
     end
 else
     calcAG = NaN;
     calcAG_1cm = NaN;
-    top=NaN;
-    bottom=NaN;
-
 end
 end
