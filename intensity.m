@@ -53,15 +53,31 @@ function result = intensity(datapath, patientIds, varargin)
 
             empty = true;
             pts = cell(1,X);
-            groups = cell(1,X); 
-            for x = 1:X
-                mx = intensity_points{x};
-                if (~isempty(mx))
-                    empty = false;
-                    groups{x} = search(mx,mask,x,threshold);
-                    pts{x} = points(groups{x}, mx);
+            group.grouping = cell(1,X); 
+            group.threshold = ones(1,X) * 0.5;
+            group.size = zeros(1,X); 
+            group.valid = zeros(1,X);
+            while (~all(group.valid))
+                for x = 1:X
+                    ix = intensity_points{x};
+                    if (~isempty(ix) && ~group.valid(x))
+                        empty = false;
+                        group.grouping{x} = search(ix,mask,x,group.threshold(x));
+                        group.size(x) = length(group.grouping{x});
+                        pts{x} = points(group.grouping{x}, ix);
+                    end
                 end
+                group.mean = mean(group.size(group.size > 0));    
+                group.std = std(group.size(group.size > 0));
+                group.valid = 1;
+%                 for x = 1:X
+%                     if (group.size(x))
+%                        if (group.size(x) < group.mean * threshold 
+%                     end
+%                 end
             end
+            
+            
 
             %% Calculate the area after 1 cm
             
@@ -79,6 +95,4 @@ function result = intensity(datapath, patientIds, varargin)
         end
     end
 end
-
-
 

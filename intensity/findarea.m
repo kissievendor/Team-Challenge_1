@@ -84,14 +84,5 @@ function [area, nerve] = findarea(p)
     nerve.plane = pl;
     nerve.intersect = sc;
     nerve.caterpillar = ca;
-    
-%     
-%     hold on;
-%     axis equal
-%     trisurf(nerve.faces, nerve.vertices(:,1),nerve.vertices(:,2),nerve.vertices(:,3),'FaceAlpha', 0.5, 'FaceColor', 'r');
-%     trisurf(pl.faces, pl.vertices(:,1),pl.vertices(:,2),pl.vertices(:,3),'FaceAlpha', 0.25, 'FaceColor', 'b');
-%     trisurf(final.faces, final.vertices(:,1),final.vertices(:,2),final.vertices(:,3),'FaceAlpha', 1, 'FaceColor', 'yellow');
-%     plot3(ca(1,:),ca(2,:),ca(3,:), 'w');
-%     hold off;
 end
 
