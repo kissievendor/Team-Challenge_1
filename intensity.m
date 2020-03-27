@@ -1,4 +1,4 @@
-function result = intensity(datapath, patients, varargin)
+function result = intensity(datapath, patientIds, varargin)
     %INTENSITY Summary of this function goes here
     %   Detailed explanation goes here
     
@@ -28,23 +28,20 @@ function result = intensity(datapath, patients, varargin)
     %% 
     
     tracts = ["tracts_C5R", "tracts_C6R", "tracts_C7R", "tracts_C5L", "tracts_C6L", "tracts_C7L"];
-    n = size(patients,2);
-    patients = loadpatient(datapath, patients, ["STIR", tracts]);
+    n = length(patientIds);
+    patients = loadpatient(datapath, patientIds, ["STIR", tracts]);
     
     result = cell(n,1);
 
     for p=1:n
-        if (n > 1)
-            patient = patients{p,1};    
-        else
-            patient = patients;
-        end
+        patient = patients{p,1};    
         
         stir = patient{1,2}{1,1};
         result{p} = cell(6,3);
     
         for t=2:7    
             mask = patient{1,2}{t,1};
+            tract = patient{1,1}{t-1,1};
 
             [X,~,~] = size(mask);    
 
@@ -55,11 +52,9 @@ function result = intensity(datapath, patients, varargin)
             %% Obtaining T,TR,R,BR,B,BL,L,TL points
 
             empty = true;
-            pts = {};
-            groups = {}; 
+            pts = cell(1,X);
+            groups = cell(1,X); 
             for x = 1:X
-                pts{x} = [];
-                groups{x} = [];
                 mx = intensity_points{x};
                 if (~isempty(mx))
                     empty = false;
@@ -69,15 +64,18 @@ function result = intensity(datapath, patients, varargin)
             end
 
             %% Calculate the area after 1 cm
+            
             if (~empty)
-                [area, intersect] = findarea(pts); 
+                [area, nerve] = findarea(pts); 
                 result{p}{t-1, 3} = area;
             else
                 result{p}{t-1, 3} = NaN; 
             end
 
-            result{p}{t-1, 1} = tracts(t-1);
+            result{p}{t-1, 1} = tract;
             result{p}{t-1, 2} = patient{1,1}{t-1,4}(2);
+            
+            drawnerve(patientIds(p), tract, nerve);
         end
     end
 end

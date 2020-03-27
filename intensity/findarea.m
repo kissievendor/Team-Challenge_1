@@ -1,4 +1,4 @@
-function [area, intersect] = findarea(p)
+function [area, nerve] = findarea(p)
     %FINDAREA Summary of this function goes here
     %   Detailed explanation goes here
     
@@ -6,8 +6,8 @@ function [area, intersect] = findarea(p)
 
     %% construct nerve
 
-    nerve.vertices = [];
-    nerve.faces = [];
+    nv.vertices = [];
+    nv.faces = [];
     face = 1;
     ca = [];
     for x = 1:X-1
@@ -24,10 +24,10 @@ function [area, intersect] = findarea(p)
                         j = i + 1;
                     end
 
-                    nerve.vertices = [nerve.vertices; 
+                    nv.vertices = [nv.vertices; 
                         [x,v(i,1),v(i,2);x,v(j,1),v(j,2);x2,v2(i,1),v2(i,2)];
                         [x,v(j,1),v(j,2);x2,v2(i,1),v2(i,2);x2,v2(j,1),v2(j,2)]];
-                    nerve.faces = [nerve.faces; [face:face+2]; [face+3:face+5]];
+                    nv.faces = [nv.faces; [face:face+2]; [face+3:face+5]];
                     face = face + 6;
                 end
             end
@@ -42,7 +42,7 @@ function [area, intersect] = findarea(p)
     % SurfaceIntersection has been edited for errors, a fresh copy off the
     % internet will not work!
 
-    [~, result] = SurfaceIntersection(pl, nerve);
+    [~, result] = SurfaceIntersection(pl, nv);
 
     %% filter out noncoplanar results
 
@@ -54,14 +54,14 @@ function [area, intersect] = findarea(p)
        end
     end
 
-    final.vertices = [result.vertices; center'];
-    final.faces = [];
+    sc.vertices = [result.vertices; center'];
+    sc.faces = [];
     result_size = result_size + 1;
 
     for v=1:size(result.edges,1)
         edge = result.edges(v,:);
         if (~isnan(result.vertices(edge(1))) && ~isnan(result.vertices(edge(2))))
-            final.faces = [final.faces; [result_size, edge(1), edge(2)]];
+            sc.faces = [sc.faces; [result_size, edge(1), edge(2)]];
         end    
     end
 
@@ -69,24 +69,29 @@ function [area, intersect] = findarea(p)
     %   and convert to mm^2
 
     totarea = 0;
-    for i = 1:size(final.faces,1)
-        ID = [final.faces(i,1),final.faces(i,2),final.faces(i,3)];
-        tp = [final.vertices(ID(1),1:3); 
-              final.vertices(ID(2),1:3); 
-              final.vertices(ID(3),1:3)];
+    for i = 1:size(sc.faces,1)
+        ID = [sc.faces(i,1),sc.faces(i,2),sc.faces(i,3)];
+        tp = [sc.vertices(ID(1),1:3); 
+              sc.vertices(ID(2),1:3); 
+              sc.vertices(ID(3),1:3)];
         triarea = 1/2*norm(cross(tp(2,1:3)-tp(1,1:3),tp(3,1:3)-tp(1,1:3)));
         totarea = totarea + triarea;
     end
 
     area = totarea*2*2; 
-    intersect = final;
     
-    hold on;
-    axis equal
-    trisurf(nerve.faces, nerve.vertices(:,1),nerve.vertices(:,2),nerve.vertices(:,3),'FaceAlpha', 0.5, 'FaceColor', 'r');
-    trisurf(pl.faces, pl.vertices(:,1),pl.vertices(:,2),pl.vertices(:,3),'FaceAlpha', 0.25, 'FaceColor', 'b');
-    trisurf(final.faces, final.vertices(:,1),final.vertices(:,2),final.vertices(:,3),'FaceAlpha', 1, 'FaceColor', 'yellow');
-    plot3(ca(1,:),ca(2,:),ca(3,:), 'w');
-    hold off;
+    nerve.nerve = nv;
+    nerve.plane = pl;
+    nerve.intersect = sc;
+    nerve.caterpillar = ca;
+    
+%     
+%     hold on;
+%     axis equal
+%     trisurf(nerve.faces, nerve.vertices(:,1),nerve.vertices(:,2),nerve.vertices(:,3),'FaceAlpha', 0.5, 'FaceColor', 'r');
+%     trisurf(pl.faces, pl.vertices(:,1),pl.vertices(:,2),pl.vertices(:,3),'FaceAlpha', 0.25, 'FaceColor', 'b');
+%     trisurf(final.faces, final.vertices(:,1),final.vertices(:,2),final.vertices(:,3),'FaceAlpha', 1, 'FaceColor', 'yellow');
+%     plot3(ca(1,:),ca(2,:),ca(3,:), 'w');
+%     hold off;
 end
 
