@@ -54,14 +54,14 @@ function [area, nerve] = findarea(p)
        end
     end
 
-    sc.vertices = [result.vertices; center'];
-    sc.faces = [];
+    final.vertices = [result.vertices; center'];
+    final.faces = [];
     result_size = result_size + 1;
 
     for v=1:size(result.edges,1)
         edge = result.edges(v,:);
         if (~isnan(result.vertices(edge(1))) && ~isnan(result.vertices(edge(2))))
-            sc.faces = [sc.faces; [result_size, edge(1), edge(2)]];
+            final.faces = [final.faces; [result_size, edge(1), edge(2)]];
         end    
     end
 
@@ -69,11 +69,11 @@ function [area, nerve] = findarea(p)
     %   and convert to mm^2
 
     totarea = 0;
-    for i = 1:size(sc.faces,1)
-        ID = [sc.faces(i,1),sc.faces(i,2),sc.faces(i,3)];
-        tp = [sc.vertices(ID(1),1:3); 
-              sc.vertices(ID(2),1:3); 
-              sc.vertices(ID(3),1:3)];
+    for i = 1:size(final.faces,1)
+        ID = [final.faces(i,1),final.faces(i,2),final.faces(i,3)];
+        tp = [final.vertices(ID(1),1:3); 
+              final.vertices(ID(2),1:3); 
+              final.vertices(ID(3),1:3)];
         triarea = 1/2*norm(cross(tp(2,1:3)-tp(1,1:3),tp(3,1:3)-tp(1,1:3)));
         totarea = totarea + triarea;
     end
@@ -82,7 +82,7 @@ function [area, nerve] = findarea(p)
     
     nerve.nerve = nv;
     nerve.plane = pl;
-    nerve.intersect = sc;
+    nerve.intersect = final;
     nerve.caterpillar = ca;
 end
 

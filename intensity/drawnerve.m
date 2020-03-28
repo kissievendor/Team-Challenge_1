@@ -1,7 +1,11 @@
 function  drawnerve(id, tract, nerve)
 %DRAWNERVE Summary of this function goes here
 %   Detailed explanation goes here
+
     figure(id);
+    if (tract == "C6R")
+        clf;
+    end    
     title("Patient " + id);
     hold on;
     axis equal

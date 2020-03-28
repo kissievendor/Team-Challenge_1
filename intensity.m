@@ -54,44 +54,40 @@ function result = intensity(datapath, patientIds, varargin)
             empty = true;
             pts = cell(1,X);
             group.grouping = cell(1,X); 
-            group.threshold = ones(1,X) * 0.5;
+            group.threshold = ones(1,X) * threshold;
             group.size = zeros(1,X); 
-            group.valid = zeros(1,X);
-            while (~all(group.valid))
-                for x = 1:X
-                    ix = intensity_points{x};
-                    if (~isempty(ix) && ~group.valid(x))
-                        empty = false;
-                        group.grouping{x} = search(ix,mask,x,group.threshold(x));
-                        group.size(x) = length(group.grouping{x});
-                        pts{x} = points(group.grouping{x}, ix);
-                    end
+            for x = 1:X
+                ix = intensity_points{x};
+                if (~isempty(ix) && ~group.valid(x))
+                    empty = false;
+                    group.grouping{x} = search(ix,mask,x,group.threshold(x));
+                    group.size(x) = length(group.grouping{x});
+                    pts{x} = points(group.grouping{x}, ix);
                 end
-                group.mean = mean(group.size(group.size > 0));    
-                group.std = std(group.size(group.size > 0));
-                group.valid = 1;
-%                 for x = 1:X
-%                     if (group.size(x))
-%                        if (group.size(x) < group.mean * threshold 
-%                     end
-%                 end
             end
             
+            group.mean = mean(group.size(group.size > 0));    
+            group.std = std(group.size(group.size > 0));
+            if (group.std > group.mean / 2)
+                empty = true;
+            end
             
-
             %% Calculate the area after 1 cm
             
             if (~empty)
                 [area, nerve] = findarea(pts); 
-                result{p}{t-1, 3} = area;
+                if (area > 0)
+                    result{p}{t-1, 3} = area;
+                    drawnerve(patientIds(p), tract, nerve);
+                else
+                    result{p}{t-1, 3} = NaN; 
+                end
             else
                 result{p}{t-1, 3} = NaN; 
             end
 
             result{p}{t-1, 1} = tract;
-            result{p}{t-1, 2} = patient{1,1}{t-1,4}(2);
-            
-            drawnerve(patientIds(p), tract, nerve);
+            result{p}{t-1, 2} = patient{1,1}{t-1,4}(2);            
         end
     end
 end
