@@ -91,7 +91,7 @@ if slice~=0
     %check for single pixels in image and remove
     cc = bwconncomp(bw,4);
     if cc.NumObjects>1
-        warning('multiple components in bw')
+        %more than one component in mask
         %remove small components from image (one or two pixels)
         S = regionprops(cc, 'Area');
         L = labelmatrix(cc);
@@ -102,8 +102,8 @@ if slice~=0
         end
     end
     
-    if cc.NumObjects>1
-        warning('Still too many components: check segmentation')
+    if cc.NumObjects>1 %Still too many components, result inconclusive 
+        warning('Too many components: check segmentation')
         calcAG = NaN;
         calcAG_1cm = NaN;
     else
