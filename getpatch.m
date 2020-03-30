@@ -1,32 +1,40 @@
-function [patch] = getpatch(image, mask)
+function [patch, slices] = getpatch(image, mask, edge)
 % Get coordinates of tract 
-
-% Misschien andere naam kiezen
-% Ones is ook een functie in MATLAB!!
-ones = [];
+coords = [];
+slices = [];
 for x = 1:168
     for y = 1:85
         for z = 1:168
             if (mask(x,y,z) == 1)
-                ones = [ones; [x,y,z]];
+                coords = [coords; [x,y,z]];
+                slices = [slices; y];
             end
         end
     end
 end 
 
 % Calculate difference between top en bottom pixels in each axis
-edge = 2;         % Extra pixels around the borders
-xtop = max(ones(:,1)) + edge; xbot = min(ones(:,1)) - edge;
-ytop = max(ones(:,2)) + edge; ybot = min(ones(:,2)) - edge;
-ztop = max(ones(:,3)) + edge; zbot = min(ones(:,3)) - edge;
+% edge: Extra pixels around the borders
+if isempty(coords) == 0
+    % Get slices 
+    slices = unique(slices);
+    % Create patch 
+    xtop = max(coords(:,1)) + edge; xbot = min(coords(:,1)) - edge;
+    ytop = max(coords(:,2)); ybot = min(coords(:,2));
+    ztop = max(coords(:,3)) + edge; zbot = min(coords(:,3)) - edge;
 
-% Create patch with good localization
-if isempty(image) == 1
-    patch = mask(xbot:xtop,ybot:ytop,zbot:ztop);
-else 
-    patch = image(xbot:xtop,ybot:ytop,zbot:ztop);
-end 
+    % Create patch with good localization
+    if isempty(image) == 1
+        patch = mask(xbot:xtop,ybot:ytop,zbot:ztop);
+    else 
+        patch = image(xbot:xtop,ybot:ytop,zbot:ztop);
+    end
     
+else
+    patch = [];
+    slices = 0;
+end 
+
 end 
 
 
