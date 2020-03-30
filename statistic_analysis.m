@@ -1,4 +1,4 @@
-% load dataset activecontour using patient_struct
+% load dataset of automatic method using patient_struct
 %% paired evaluations (using p=signrank(x,y))
 % h=0 indicates a failure to reject the null hypothesis
 % p-value < 0.05 means a significant difference between both groups
