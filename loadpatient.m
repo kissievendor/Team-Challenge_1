@@ -36,8 +36,8 @@ function [output] = loadpatient(datapath, patients, load_nii)
 
         measurements_opts = delimitedTextImportOptions("NumVariables", 1, "Delimiter", ",", "VariableTypes", "double");
 
-        diameters = table2array(readfile(datapath + "\" + patient + "_diameter", 'measurement', measurements_opts));
-        areas = table2array(readfile(datapath + "\" + patient + "_area", 'measurement', measurements_opts));
+        diameters = table2array(readfile(datapath + "\" + patient + "_diameter.txt", 'measurement', measurements_opts));
+        areas = table2array(readfile(datapath + "\" + patient + "_area.txt", 'measurement', measurements_opts));
 
         coors_opts = delimitedTextImportOptions("NumVariables", 3, "Delimiter", "\t");
 
@@ -45,7 +45,7 @@ function [output] = loadpatient(datapath, patients, load_nii)
         nerves = cell(length(nerve_names), 4);
         for nerve = nerve_names   
             nerves{i,1} = nerve;
-            nerves{i,2} = cellfun(@str2double,table2cell(readfile(datapath + "\" + patient + "_coors_" + nerve, 'coors', coors_opts)));
+            nerves{i,2} = cellfun(@str2double,table2cell(readfile(datapath + "\" + patient + "_coors_" + nerve + ".txt", 'coors', coors_opts)));
             nerves{i,3} = [diameters(i+i-1), diameters(i+i)];
             nerves{i,4} = [areas(i+i-1), areas(i+i)];
             if tracts
