@@ -5,6 +5,10 @@ patients = loadpatient(datapath, 1:16, ["tracts", "MIP"]);
 %%
 clear i patstruct finalstruct
 
+%save txt?
+save=true;
+%save=false;
+
 %Patient indexes for ALS and MMN
 ALS_index = [1, 4, 8, 9, 10, 15, 21, 22, 23, 27, 29, 30, 31, 35, 36];
 MMN_index = [2, 3, 5, 6, 7, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 28, 32, 33];
@@ -19,7 +23,7 @@ count_ALS = 1;
 count_MMN = 1;
 for i=1:length(patients)
 
-    patstruct = create_struct(patients,i);
+    patstruct = create_struct(patients,i,save);
     finalstruct_getpatch{i,1}=patstruct;
     
     if ismember(i, ALS_index)
@@ -29,19 +33,23 @@ for i=1:length(patients)
         MMN_getpatch{count_MMN,1}=patstruct;
         count_MMN = count_MMN+1;
     end
+    
 end
        
 
 %% process nerves
-function [patstruct] = create_struct(patients,p_nr)
+function [patstruct] = create_struct(patients,p_nr,save)
 %Processes all nerves of one patients and stores is in a patient struct
 patient = patients(p_nr);
 patstruct = struct([]);
 
-tracts = ["C5L" "C5R" "C6L" "C6R" "C7L" "C7R"];
+tracts = ["C5R" "C6R" "C7R" "C5L" "C6L" "C7L"];
 
 disp('patient:')
 disp(p_nr)
+
+%create array for saving diameters as txt
+arr_txt = zeros(12,1);
 
 for i = 1:length(tracts)
     [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm] = activecontouring(patient, tracts(i));
@@ -59,7 +67,18 @@ for i = 1:length(tracts)
     patstruct{i+1,6}=calcAG_1cm;  
     patstruct{1,7}='percentage off';
     patstruct{i+1,7}=abs(1-calcAG_1cm/afterGanglion_1cm)*100;
+    
+    %first add calAG and then calAG_1cm to array
+    arr_txt(2*i-1)=calcAG;
+    arr_txt(2*i) = calcAG_1cm;
 end
+
+if save==true
+    p_str = strcat(sprintf('%03d',p_nr), '_diameter_calc.txt');
+    arr_txt = table(arr_txt);
+    writetable(arr_txt,p_str,'WriteVariableNames',0);
+end
+
 end
 
 
