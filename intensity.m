@@ -4,6 +4,7 @@ function result = intensity(datapath, patientIds, varargin)
     
     addpath(pwd + "\intensity");
     warning('off','MATLAB:delaunayTriangulation:DupPtsWarnId');
+    warning('off','MATLAB:datetime:InvalidSystemTimeZone');
     
     %% Extra parameters
     threshold = 0.5;
