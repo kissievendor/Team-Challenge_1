@@ -1,4 +1,4 @@
-function [result_structured] = result_struct(result)
+function [result_structured] = result_struct(result,patientIds)
 
 result_structured = struct([]);
 tracts = ["C5R" "C6R" "C7R" "C5L" "C6L" "C7L"];
@@ -9,9 +9,10 @@ for p = 1:length(result)
 
     ss = struct([]); % sub structure, for each patient
     arr_txt = zeros(12,1); %create array for saving diameters as txt
+    p_nr = patientIds(p);
     
     for i = 1:length(tracts)
-        ss{1,1}=strcat("patient_",string(p));
+        ss{1,1}=strcat("patient_",string(p_nr));
         ss{i+1,1}=tracts(i);
         ss{1,2}='Just after ganglion';
         ss{i+1,2}='not applicable yet';
@@ -35,7 +36,7 @@ for p = 1:length(result)
     result_structured{p,1} = ss;
     
     if save==true
-    p_str = strcat(sprintf('%03d',p), '_area_calc.txt');
+    p_str = strcat(sprintf('%03d',p_nr), '_area_calc.txt');
     arr_txt = table(arr_txt);
     writetable(arr_txt,p_str,'WriteVariableNames',0);
     end

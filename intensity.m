@@ -90,5 +90,9 @@ function result = intensity(datapath, patientIds, varargin)
             result{p}{t-1, 2} = patient{1,1}{t-1,4}(2);            
         end
     end
+    
+    %% get results in preferred structure
+    
+    result = result_struct(result,patientIds);
 end
 
