@@ -58,7 +58,7 @@ function result = intensity(datapath, patientIds, varargin)
             group.size = zeros(1,X); 
             for x = 1:X
                 ix = intensity_points{x};
-                if (~isempty(ix) && ~group.valid(x))
+                if (~isempty(ix))
                     empty = false;
                     group.grouping{x} = search(ix,mask,x,group.threshold(x));
                     group.size(x) = length(group.grouping{x});
