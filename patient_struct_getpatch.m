@@ -1,6 +1,7 @@
 %% loadpatient
 datapath = "C:\Users\s150055\Documents\Programming\MATLAB\TC\Data";
-patients = loadpatient(datapath, 1:16, ["tracts", "MIP"]);
+patientIds = 11:16;
+patients = loadpatient(datapath, patientIds, ["tracts", "MIP"]);
 
 %%
 clear i patstruct finalstruct
@@ -21,15 +22,19 @@ MMN_getpatch = struct([]);
 %separate counter for ALS / MMN for struct indexing
 count_ALS = 1;
 count_MMN = 1;
-for i=1:length(patients)
-
-    patstruct = create_struct(patients,i,save);
+for p_nr=patientIds
+    %get index for this p_nr
+    i=find(patientIds==p_nr);
+    
+    patient = patients(i);
+    
+    patstruct = create_struct(patient,p_nr,save);
     finalstruct_getpatch{i,1}=patstruct;
     
-    if ismember(i, ALS_index)
+    if ismember(p_nr, ALS_index)
         ALS_getpatch{count_ALS,1}=patstruct;
         count_ALS = count_ALS+1;
-    elseif ismember(i, MMN_index)
+    elseif ismember(p_nr, MMN_index)
         MMN_getpatch{count_MMN,1}=patstruct;
         count_MMN = count_MMN+1;
     end
@@ -38,9 +43,8 @@ end
        
 
 %% process nerves
-function [patstruct] = create_struct(patients,p_nr,save)
+function [patstruct] = create_struct(patient, p_nr,save)
 %Processes all nerves of one patients and stores is in a patient struct
-patient = patients(p_nr);
 patstruct = struct([]);
 
 tracts = ["C5R" "C6R" "C7R" "C5L" "C6L" "C7L"];

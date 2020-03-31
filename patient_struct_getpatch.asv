@@ -1,9 +1,14 @@
 %% loadpatient
 datapath = "C:\Users\s150055\Documents\Programming\MATLAB\TC\Data";
-patients = loadpatient(datapath, 1:16, ["tracts", "MIP"]);
+patientIds = 11;
+patients = loadpatient(datapath, patientIds, ["tracts", "MIP"]);
 
 %%
 clear i patstruct finalstruct
+
+%save txt?
+save=true;
+%save=false;
 
 %Patient indexes for ALS and MMN
 ALS_index = [1, 4, 8, 9, 10, 15, 21, 22, 23, 27, 29, 30, 31, 35, 36];
@@ -17,15 +22,19 @@ MMN_getpatch = struct([]);
 %separate counter for ALS / MMN for struct indexing
 count_ALS = 1;
 count_MMN = 1;
-for i=1:length(patients)
-
-    patstruct = create_struct(patients,i,true);
+for p_nr=patientIds
+    %get index for this p_nr
+    i=find(patientIds==p_nr);
+    
+    patient = patients(i);
+    
+    patstruct = create_struct(patient,p_nr,save);
     finalstruct_getpatch{i,1}=patstruct;
     
-    if ismember(i, ALS_index)
+    if ismember(p_nr, ALS_index)
         ALS_getpatch{count_ALS,1}=patstruct;
         count_ALS = count_ALS+1;
-    elseif ismember(i, MMN_index)
+    elseif ismember(p_nr, MMN_index)
         MMN_getpatch{count_MMN,1}=patstruct;
         count_MMN = count_MMN+1;
     end
@@ -34,9 +43,8 @@ end
        
 
 %% process nerves
-function [patstruct] = create_struct(patients,p_nr,save)
+function [patstruct] = create_struct(patient, p_nr,save)
 %Processes all nerves of one patients and stores is in a patient struct
-patient = patients(p_nr);
 patstruct = struct([]);
 
 tracts = ["C5R" "C6R" "C7R" "C5L" "C6L" "C7L"];
@@ -70,9 +78,9 @@ for i = 1:length(tracts)
 end
 
 if save==true
-    p_nr = int2str(p_nr);
-    p_str = strcat(sprintf('%03d',p_nr, '_diameter_calc.txt');
-    dlmwrite(p_str,arr_txt);
+    p_str = strcat(sprintf('%03d',p_nr), '_diameter_calc.txt');
+    arr_txt = table(arr_txt);
+    writetable(arr_txt,p_str,'WriteVariableNames',0);
 end
 
 end
