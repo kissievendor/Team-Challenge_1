@@ -1,7 +1,7 @@
 %% loadpatient
 datapath = "C:\Users\s150055\Documents\Programming\MATLAB\TC\Data";
 patientIds = 11:16;
-patients = loadpatient(datapath, patientIds, ["tracts", "MIP_or"]);
+patients = loadpatient(datapath, patientIds, ["tracts", "MIP"]);
 
 %%
 clear i patstruct finalstruct
@@ -15,9 +15,9 @@ ALS_index = [1, 4, 8, 9, 10, 15, 21, 22, 23, 27, 29, 30, 31, 35, 36];
 MMN_index = [2, 3, 5, 6, 7, 11, 12, 13, 14, 16, 17, 18, 19, 20, 24, 25, 26, 28, 32, 33];
 
 %Create 3 structs to store calculations per patient per group (and total)
-finalstruct = struct([]);
-ALS = struct([]);
-MMN = struct([]);
+finalstruct_getpatch = struct([]);
+ALS_getpatch = struct([]);
+MMN_getpatch = struct([]);
 
 %separate counter for ALS / MMN for struct indexing
 count_ALS = 1;
@@ -29,13 +29,13 @@ for p_nr=patientIds
     patient = patients(i);
     
     patstruct = create_struct(patient,p_nr,save);
-    finalstruct{i,1}=patstruct;
+    finalstruct_getpatch{i,1}=patstruct;
     
     if ismember(p_nr, ALS_index)
-        ALS{count_ALS,1}=patstruct;
+        ALS_getpatch{count_ALS,1}=patstruct;
         count_ALS = count_ALS+1;
     elseif ismember(p_nr, MMN_index)
-        MMN{count_MMN,1}=patstruct;
+        MMN_getpatch{count_MMN,1}=patstruct;
         count_MMN = count_MMN+1;
     end
     
@@ -100,6 +100,9 @@ MIP = patient{1, 1}{1, 2}{2, 1};
 for i = 1:length(patient{1,1}{1,1})
     if patient{1,1}{1,1}{i,1} == nerve
         tract = patient{1,1}{1,1}{i,5};
+        tract = imresize3(tract,[448 170 448]);
+        tract = imbinarize(tract,0.0001);
+        
         %diameter measurements
         afterGanglion = patient{1,1}{1,1}{i,3}(1);
         afterGanglion_1cm = patient{1,1}{1,1}{i,3}(2);
@@ -112,8 +115,6 @@ if isnan(tract)==1 %if no tract available
     %define region of interest for activecontouring
 
 else
-    tract = imresize3(tract,[448 170 448]);
-    tract = imbinarize(tract,0.0001);
     [tractstruct, ~] = getpatch([],tract,2);
     [MIPstruct, slices] = getpatch(MIP,tract,2);
     if slices~=0

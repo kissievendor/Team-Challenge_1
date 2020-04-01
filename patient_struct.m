@@ -1,7 +1,6 @@
 %% loadpatient
 datapath = "D:\TC data\data";
-patientIds = 1:36;
-patients = loadpatient(datapath, patientIds, ["tracts", "MIP_or"]);
+patients = loadpatient(datapath, 1:36, ["tracts", "MIP"]);
 
 %%
 clear i patstruct finalstruct
