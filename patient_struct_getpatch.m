@@ -1,6 +1,6 @@
 %% loadpatient
 datapath = "C:\Users\s150055\Documents\Programming\MATLAB\TC\Data";
-patientIds = 11:16;
+patientIds = 1:36;
 patients = loadpatient(datapath, patientIds, ["tracts", "MIP_or"]);
 
 %%
@@ -141,8 +141,7 @@ else
         bw = bwareafilt(bw,1);
 
         % Define pixel size in x,y and z direction
-        pixdim = [0.75,1,0.75]; %for low resolution
-
+        pixdim = [0.75,1,0.75]; 
 
         stats = regionprops(bw, 'Orientation');
         J = imrotate(bw,stats.Orientation); %Turn the nerve so it is straight
