@@ -2,9 +2,9 @@ function [patch, slices] = getpatch(image, mask, edge)
 % Get coordinates of tract 
 coords = [];
 slices = [];
-for x = 1:168
-    for y = 1:85
-        for z = 1:168
+for x = 1:448
+    for y = 1:170
+        for z = 1:448
             if (mask(x,y,z) == 1)
                 coords = [coords; [x,y,z]];
                 slices = [slices; y];

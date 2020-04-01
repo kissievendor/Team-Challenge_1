@@ -100,6 +100,8 @@ MIP = patient{1, 1}{1, 2}{2, 1};
 for i = 1:length(patient{1,1}{1,1})
     if patient{1,1}{1,1}{i,1} == nerve
         tract = patient{1,1}{1,1}{i,5};
+        tract = imresize3(tract,[448 170 448]);
+        tract = imbinarize(tract,0.0001);
         
         %diameter measurements
         afterGanglion = patient{1,1}{1,1}{i,3}(1);
@@ -140,7 +142,7 @@ else
         bw = bwareafilt(bw,1);
 
         % Define pixel size in x,y and z direction
-        pixdim = [2,2,2]; %for low resolution
+        pixdim = [0.75,1,0.75]; %for low resolution
 
 
         stats = regionprops(bw, 'Orientation');
