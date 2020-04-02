@@ -87,7 +87,7 @@ function [center_1, center_2, plane_1,plane_2] = plane(ca,tract)
     
     % just after ganglion (start of nerve)
     p1 = [ca(1,1),ca(2,1),ca(3,1)];
-    p2 = [ca(1,2),ca(2,2),ca(3,2)];
+    p2 = [ca(1,8),ca(2,8),ca(3,8)];
     orth = null(p1-p2);
 
     center_2 = [0.5*ca(1,1)+0.5*ca(1,2);

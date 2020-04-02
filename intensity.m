@@ -76,23 +76,27 @@ function result = intensity(datapath, patientIds, varargin)
             
             %% Calculate the areas
             % area_1 is 1 cm after ganglion, area_2 just after ganglion
-            
-            if (~empty)
-                [area_1, area_2, nerve] = findarea(pts,tract); 
-                if (area_1 > 0)
-                    result{p,1}{t-1, 3} = area_1;
-                else
-                    result{p,1}{t-1, 3} = NaN; 
+            try
+                if (~empty)
+                    [area_1, area_2, nerve] = findarea(pts,tract); 
+                    if (area_1 > 0)
+                        result{p,1}{t-1, 3} = area_1;
+                    else
+                        result{p,1}{t-1, 3} = NaN; 
+                    end
+                    if (area_2 > 0)
+                        result{p,2}{t-1, 3} = area_2;
+                    else
+                        result{p,2}{t-1, 3} = NaN; 
+                    end
+                    if (area_1 > 0 && area_2 > 0)
+                        drawnerve(patientIds(p), tract, nerve);
+                    end
                 end
-                if (area_2 > 0)
-                    result{p,2}{t-1, 3} = area_2;
-                else
-                    result{p,2}{t-1, 3} = NaN; 
-                end
-                if (area_1 > 0 && area_2 > 0)
-                    drawnerve(patientIds(p), tract, nerve);
-                end
-            else
+            catch
+                    empty = true;
+            end
+            if (empty)
                 result{p,1}{t-1, 3} = NaN;
                 result{p,2}{t-1, 3} = NaN;
             end
