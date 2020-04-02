@@ -1,6 +1,27 @@
 function [area_1, area_2, nerve] = findarea(p,tract)
-    %FINDAREA Summary of this function goes here
-    %   Detailed explanation goes here
+    %FINDAREA Finding the intersecting area between the planes after 1cm and directly after the ganglion and the constructed nerve.
+    
+    % Construct nerve
+    %   Connect the vertices of one slice with the nearby vertices of the
+    %   next slice.
+    
+    % Get the planes
+    %     pl_1 for 1 cm after ganglion, pl_2 for just after ganglion
+    
+    % Calculate the intersection between nerve and plane
+    
+    % Filter out noncoplanar results
+    
+    % Find the areas of the intersection planes
+    %   1cm after ganglion
+    %       Sum of the area of triangles in the plane, each consisting of
+    %       two vertices and the center point 1cm after the ganglion.
+    %       Conversion into mm and saving as area_1.
+    
+    %    directly after ganglion
+    %       Sum of the area of triangles in the plane, each consisting of
+    %       two vertices and the center point directly after the ganglion.
+    %       Conversion into mm and saving as area_2.
     
     [~,X] = size(p);
 
@@ -35,7 +56,6 @@ function [area_1, area_2, nerve] = findarea(p,tract)
     end
 
     %% get the planes
-    % pl_1 for 1 cm after ganglion, pl_2 for just after ganglion
 
     [center_1, center_2, pl_1, pl_2] = plane(ca,tract);
 
@@ -88,9 +108,7 @@ function [area_1, area_2, nerve] = findarea(p,tract)
     end
 
     %%  find the areas of the intersection planes
-    %   and convert to mm^2
 
-    % 1 cm after ganglion
     totarea_1 = 0;
     for i = 1:size(final_1.faces,1)
         ID = [final_1.faces(i,1),final_1.faces(i,2),final_1.faces(i,3)];
@@ -103,7 +121,6 @@ function [area_1, area_2, nerve] = findarea(p,tract)
 
     area_1 = totarea_1*2*2;
     
-    % just after ganglion
     totarea_2 = 0;
     for i = 1:size(final_2.faces,1)
         ID = [final_2.faces(i,1),final_2.faces(i,2),final_2.faces(i,3)];

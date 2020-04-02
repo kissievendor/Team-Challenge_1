@@ -1,8 +1,8 @@
-% function to make a mask of the groups
-
 function makegroupmask(groups)
-    %MAKEGROUPMASK Summary of this function goes here
-    %   Detailed explanation goes here
+    %MAKEGROUPMASK Builds mask of the groups.
+    
+    %   Building a mask for the group of pixels that represent the nerve in
+    %   the slice.
 
     groupmask = zeros(168,85,168);
     for i=1:168

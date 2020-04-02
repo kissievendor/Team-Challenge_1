@@ -1,7 +1,11 @@
 function  drawnerve(id, tract, nerve)
-%DRAWNERVE Summary of this function goes here
-%   Detailed explanation goes here
+%DRAWNERVE Plotting labeled nerve structures.
 
+%   Building a figure containing the patient id, the structure of the
+%   labeled nerves and the planes with their intersections directly and 1cm
+%   after the ganglion, respectively.
+%   Additionally, their position along the three dimensions is indicated.
+ 
     figure(id);
     if (tract == "C6R")
         clf;

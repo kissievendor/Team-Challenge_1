@@ -1,5 +1,5 @@
 function [copl,rnk] = iscoplanar(X,Y,Z,tolerance)
-% Tests input points for coplanarity in N-dimensional space.
+%ISCOPLANAR Tests input points for coplanarity in N-dimensional space.
 %
 % SYNTAX:
 % COPL = ISCOPLANAR(V)

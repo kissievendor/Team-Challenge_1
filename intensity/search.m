@@ -1,6 +1,11 @@
 function [group] = search(start, stir, x, th)
-    %SEARCH Summary of this function goes here
-    %   Detailed explanation goes here
+    %SEARCH Builds the group of pixels displaying the nerve for each slice.
+    
+    %   Checks adjacent pixels of the brightest pixel in the groupmask of
+    %   the slice whether their intensity is above the threshold. If so,
+    %   they become part of the group and their adjacent pixels get
+    %   checked.
+
         
     brightness = @(yz) stir(x,yz(1),yz(2));
 

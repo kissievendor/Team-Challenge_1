@@ -1,4 +1,7 @@
 function [result_structured] = result_struct(result,patientIds)
+%RESULT_STRUCT Presenting results in the desired structure.
+
+%
 
 result_structured = struct([]);
 tracts = ["C5R" "C6R" "C7R" "C5L" "C6L" "C7L"];

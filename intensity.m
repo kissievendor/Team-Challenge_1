@@ -1,6 +1,25 @@
 function result = intensity(datapath, patientIds, varargin)
-    %INTENSITY Summary of this function goes here
-    %   Detailed explanation goes here
+%INTENSITY Calculates the area of the nerves C5 to C7 using an intensity-based algorithm and plotting a 3D model of them.
+ 
+% Extra parameters
+    % Setting default value for threshold
+    % Checking input for incorrect parameters and, if entered correctly, set
+    % values for threshold and margin
+    
+% 
+    % Loading STIR images and DTI-tractography of selected patient(s)
+    % Building result grid
+    % Building the rectangular mask around the nerve
+    % Obtaining 8 vertex points per slice
+    % Calculation of the areas 1cm and directly after the ganglion
+    % directly, respectively, if the standard deviation of the values
+    % is not larger than half their mean. Subsequently, storage of the
+    % values in the result grid.
+    % If the standard deviation is over the set limit, the corresponding
+    % result gets set to NaN.
+    
+% Output
+    % result = result_struct(result,patientIds);
     
     addpath(pwd + "\intensity");
     warning('off','MATLAB:delaunayTriangulation:DupPtsWarnId');

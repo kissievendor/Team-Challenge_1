@@ -1,19 +1,22 @@
-% datapath = "C:\Users\s_nor\OneDrive\Medical Imaging\Team Challenge\Part 2\data";
-% example path to data
-
-% patients = loadpatient(datapath, 1:16, ["tracts", "STIR", "DTI"]);
-% example usage. will break if load_nii has invalid names.
-
-% ------------------------------------------------------------------------
-% result is a 1x16 cell that are 1x2 cells. 
-
-% the first cell is a 6x5 cell containing columns with:
-% nerve names (like C6R) | _coords_ | _diameters | _area | _tracts_C6R.nii
-
-% the second cell is a 1x3 cell containing columns with:
-% tracts.nii | STIR.nii | DTI.nii
-
 function [output] = loadpatient(datapath, patients, load_nii)
+%LOADPATIENT Loads data of designated patient(s).
+    %
+    % Example usage: patients = loadpatient(datapath, [3,5,8], ["tracts",
+    % "STIR", "DTI"]);
+    % Will break if load_nii has invalid names.
+    % The result in this case is a 3x1 cell that contains 7x7 cells for each patient. 
+    %
+    % The 7x7 cells contain columns with:
+    % the patient name (e.g. patient_3) and measurements (manually and
+    % calculated with the algorithm) as well as the percentage to which the
+    % algorithm was off the manual measurement.
+    % patient_3 | 'Just after ganglion' | 'calc just after ganglion' |
+    % 'percentage off'| '1cm after ganglion' | 'calc 1cm after ganglion' |
+    % 'percentage off'
+    
+    % The 7x7 cells contain rows with the name of the patient and nerves. 
+    % "patient_3" | 'C5R' | 'C6R' | 'C7R' | 'C5L' | 'C6L' | 'C7L'
+
     output = cell(length(patients),1);
     j = 1;    
       
@@ -64,8 +67,8 @@ function [output] = loadpatient(datapath, patients, load_nii)
                 t = NaN;
                 if (isfile(path + ".nii"))
                     t = niftiread(path + ".nii");
-                elseif isfile(path + ".gz")
-                    t = niftiread(path + ".gz");
+                elseif isfile(path + ".nii.gz")
+                    t = niftiread(path + ".nii.gz");
                 end
             case 'coors'
                 t = table(NaN(8,1),NaN(8,1),NaN(8,1));

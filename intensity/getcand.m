@@ -1,7 +1,8 @@
 function [y,z] = getcand(m, maxmins, c, i)
+%GETCAND Gets candidate for the corners.
 
-% function to get the right candidate 
-% because the formula is different for the 4 different corners
+%   Depending on which of the four corners the candidate pixel gets
+%   selected.
 
 if m == 1
     y = maxmins(1,4) + c - i;

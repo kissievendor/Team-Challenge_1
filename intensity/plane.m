@@ -1,13 +1,44 @@
 function [center_1, center_2, plane_1,plane_2] = plane(ca,tract)
-    %PLANE Summary of this function goes here
-    %   Detailed explanation goes here
+    %PLANE Builds plane after 1cm along the nerve route and directly after the ganglion, respectively.
+    
+    %   Finding the position 1cm after the ganglion.
+    %   3 possible approaches: along the nerve route, in xz-plane as a
+    %   straight slope or in the xz-plane along the nerve.
+       
+    %  Finding 1cm in ca-direction
+    %       Calculating the distance along the center points of the nerve.
+    %       Break if the total distance is at least 1cm.
+    %       Calculating the coordinates at the 1cm mark.
+       
+    %  Finding 1cm in xz-plane as straight slope
+    %       Calculating the distance using the slice thickness of 2mm.
+    %       Break if distance is at least 1cm.
+    %       Calculating the coordinates at the 1cm mark.    
+       
+    %  Finding 1cm in xz-plane along nerve
+    %       Calculating the distance along the the nerve in the xz-plane.
+    %       Break if the total distance is at least 1cm.
+    %       Calculating the coordinates at the 1cm mark.
+    
+    %  Finding the planes
+    %       at 1cm mark
+    %           Build orthogonal.
+    %           Use center point calculated with first of the three
+    %           methods.
+    %           Build plane from center point expanding in three dimensions
+    %           right to orthogonal.
+    %     
+    %       at ganglion
+    %           Build orthogonal.
+    %           Calculate center point.
+    %           Build plane from center point expanding in three dimensions
+    %           right to orthogonal.
     
     if tract == "C5L" || tract == "C6L" || tract == "C7L"
         ca = flip(ca,2);
     end
     
-    %%  find 1 cm in ca-direction
-    %   which is the actual 1 cm mark of the nerve
+    %%  find 1cm in ca-direction
 
     totdis = 0; distances = [];
     for i=1:7
@@ -27,7 +58,6 @@ function [center_1, center_2, plane_1,plane_2] = plane(ca,tract)
                 frac1*ca(3,i)+frac2*ca(3,i+1)];
 
     %%  find 1 cm in xz-plane as straight slope
-    %   which is how manual 1 cm mark is determined(?)
 
     for j=2:7
         distance = 0.2*sqrt((ca(1,1)-ca(1,j)).^2+(ca(3,1)-ca(3,j)).^2);
@@ -45,7 +75,6 @@ function [center_1, center_2, plane_1,plane_2] = plane(ca,tract)
                 frac1*ca(3,i)+frac2*ca(3,i+1)];
 
     %%  find 1 cm in xz-plane along nerve
-    %   which is how manual 1 cm mark is determined(?)
 
     totdis = 0; distances = [];
     for i=1:7
