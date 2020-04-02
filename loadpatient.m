@@ -36,8 +36,8 @@ function [output] = loadpatient(datapath, patients, load_nii)
 
         measurements_opts = delimitedTextImportOptions("NumVariables", 1, "Delimiter", ",", "VariableTypes", "double");
 
-        diameters = table2array(readfile(datapath + "\" + patient + "_diameter.txt", 'measurement', measurements_opts));
-        areas = table2array(readfile(datapath + "\" + patient + "_area.txt", 'measurement', measurements_opts));
+        diameters = table2array(readfile(datapath + "\" + patient + "_diameter", 'measurement', measurements_opts));
+        areas = table2array(readfile(datapath + "\" + patient + "_area", 'measurement', measurements_opts));
 
         coors_opts = delimitedTextImportOptions("NumVariables", 3, "Delimiter", "\t");
 
@@ -62,18 +62,20 @@ function [output] = loadpatient(datapath, patients, load_nii)
         switch type
             case 'nifti'
                 t = NaN;
-                if (isfile(path + ".nii") || isfile(path + ".gz"))
-                    t = niftiread(path);
+                if (isfile(path + ".nii"))
+                    t = niftiread(path + ".nii");
+                elseif isfile(path + ".gz")
+                    t = niftiread(path + ".gz");
                 end
             case 'coors'
                 t = table(NaN(8,1),NaN(8,1),NaN(8,1));
                 if (isfile(path + ".txt"))
-                    t = readtable(path, opts);
+                    t = readtable(path + ".txt", opts);
                 end
             case 'measurement'
                 t = table(NaN(12,1));
                 if (isfile(path + ".txt"))
-                    t = readtable(path, opts);
+                    t = readtable(path + ".txt", opts);
                 end
         end
     end
