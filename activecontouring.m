@@ -1,11 +1,13 @@
 %% activecontouring
-function [calcAG, calcAG_1cm] = activecontouring(patient,nerve)
+function [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm] = activecontouring(patient,nerve)
 %Create active contour mask of one nerve, and compute diameters
 %Inputs:
 % - patient: cell, from loadpatient.m
 % - nerve: str, eg. 'C5R'
 %Outputs:
+% - afterGanglion: manual measured diameter after ganglion in mm 
 % - calcAG: calculated diameter after ganglion (estimated location) in mm
+% - afterGanglion_1cm: manual measured diameter 1cm after ganglion
 % - calcAG_1cm: calculated diameter 1cm after ganglion (estimated location)
 % in mm
 
@@ -13,9 +15,12 @@ MIP = patient{1, 1}{1, 2}{2, 1};
 for i = 1:length(patient{1,1}{1,1})
     if patient{1,1}{1,1}{i,1} == nerve
         tract = patient{1,1}{1,1}{i,5};
+
+        afterGanglion = patient{1,1}{1,1}{i,3}(1);
+        afterGanglion_1cm = patient{1,1}{1,1}{i,3}(2);
     end 
 end 
-if isnan(tract)==1 %if no tract available
+if isnan(tract)==1
     warning(strcat('tract not available for ', nerve))
     calcAG = NaN;
     calcAG_1cm = NaN;
@@ -51,7 +56,7 @@ else
 
         stats = regionprops(bw, 'Orientation');
         J = imrotate(bw,stats.Orientation); 
-        summed = sum(J==1,2); 
+        summed = sum(J==1,2);
         nervesum = summed(summed>0);
         n = ceil(numel(nervesum)/2);
 
