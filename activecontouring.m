@@ -1,12 +1,13 @@
 %% activecontouring
 function [calcAG, calcAG_1cm] = activecontouring(patient,nerve)
-%Do the active contouring of one nerve
+%Create active contour mask of one nerve, and compute diameters
+%Inputs:
+% - patient: cell, from loadpatient.m
+% - nerve: str, eg. 'C5R'
 %Outputs:
-% - afterGanglion: measured diameter just after ganglion
-% - calcAG: calculated diameter just after ganglion (location by estimation)
-% - afterGanglion_1cm: measured diameter 1cm after ganglion
-% - calcAG_1cm: calculated diameter 1cm after ganglion (location by
-% estimation)
+% - calcAG: calculated diameter after ganglion (estimated location) in mm
+% - calcAG_1cm: calculated diameter 1cm after ganglion (estimated location)
+% in mm
 
 MIP = patient{1, 1}{1, 2}{2, 1};
 for i = 1:length(patient{1,1}{1,1})
@@ -15,7 +16,7 @@ for i = 1:length(patient{1,1}{1,1})
     end 
 end 
 if isnan(tract)==1 %if no tract available
-    warning('tract not available')
+    warning(strcat('tract not available for ', nerve))
     calcAG = NaN;
     calcAG_1cm = NaN;
 else
@@ -42,31 +43,25 @@ else
             end    
         end 
 
-        % Execute active contour
         bw = activecontour(MIP_slice, tract_slice, 20);
         %take largest object (e.g. remove single pixels/objects)
         bw = bwareafilt(bw,1);
 
-        % Define pixel size in x,y and z direction
         pixdim = [0.75,1,0.75]; 
 
         stats = regionprops(bw, 'Orientation');
-        J = imrotate(bw,stats.Orientation); %Turn the nerve so it is straight
-        summed = sum(J==1,2); %sum over all every row to get number of pixels per row
+        J = imrotate(bw,stats.Orientation); 
+        summed = sum(J==1,2); 
         nervesum = summed(summed>0);
         n = ceil(numel(nervesum)/2);
 
-        %which is most likely to be ganglion? thickest part
-        %then take width of end of the nerve (aprox. 1cm after ganglion)
-        %take width 5 pixels(1cm) upwards (aprox. after ganglion)
         top = nervesum(1:n);
         top = mean(top);
         bottom = nervesum(n+1:end);
         bottom = mean(bottom);
 
-        % Problem with slice selection?
-        if length(nervesum) < 18 %so shorter than 1cm+margin         
-            warning('nerve shorter than 1cm')
+        if length(nervesum) < 17 %so shorter than 1cm+margin         
+            warning(strcat('nerve ', nerve, ' shorter than 1cm'))
             calcAG = NaN;
             calcAG_1cm = NaN;
 
@@ -79,7 +74,7 @@ else
             calcAG_1cm = mean(nervesum(1:5))*pixdim(1); %closer to ganglion
             calcAG = mean(nervesum(12:17));
         else
-            warning('ganglion location inconclusive')
+            warning(strcat('ganglion location inconclusive for ', nerve))
             calcAG = NaN;
             calcAG_1cm = NaN;
         end

@@ -1,5 +1,13 @@
 function [patstruct] = create_struct(patient, p_nr, save)
 %Processes all nerves of one patients and stores is in a patient struct
+
+%Inputs: 
+% - patient: cell, from loadpatient.m
+% - p_nr: int, identifier of patient 
+% - save: bool, save diameter measurements as txt
+%Outputs:
+% - patstruct: 7x3 cell, with calculation and for after ganglion and 1cm after
+
 patstruct = struct([]);
 
 tracts = ["C5R" "C6R" "C7R" "C5L" "C6L" "C7L"];
