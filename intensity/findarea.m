@@ -1,4 +1,4 @@
-function [area, nerve] = findarea(p)
+function [area_1, area_2, nerve] = findarea(p,tract)
     %FINDAREA Summary of this function goes here
     %   Detailed explanation goes here
     
@@ -34,55 +34,93 @@ function [area, nerve] = findarea(p)
         end
     end
 
-    %% get the plane
+    %% get the planes
+    % pl_1 for 1 cm after ganglion, pl_2 for just after ganglion
 
-    [center, pl] = plane(ca);
+    [center_1, center_2, pl_1, pl_2] = plane(ca,tract);
 
     %% calculate the intersection between nerve and plane
     % SurfaceIntersection has been edited for errors, a fresh copy off the
     % internet will not work!
 
-    [~, result] = SurfaceIntersection(pl, nv);
+    [~, result_1] = SurfaceIntersection(pl_1, nv);
+    [~, result_2] = SurfaceIntersection(pl_2, nv);
+
 
     %% filter out noncoplanar results
 
-    result_size = size(result.vertices,1);
+    result1_size = size(result_1.vertices,1);
 
-    for v=1:result_size
-       if (~iscoplanar([pl.vertices; result.vertices(v,:)], 0.05) || any(any(pl.vertices==result.vertices(v,:),2)))
-          result.vertices(v,:) = NaN;
+    for v=1:result1_size
+       if (~iscoplanar([pl_1.vertices; result_1.vertices(v,:)], 0.05) || any(any(pl_1.vertices==result_1.vertices(v,:),2)))
+          result_1.vertices(v,:) = NaN;
        end
     end
 
-    final.vertices = [result.vertices; center'];
-    final.faces = [];
-    result_size = result_size + 1;
+    final_1.vertices = [result_1.vertices; center_1'];
+    final_1.faces = [];
+    result1_size = result1_size + 1;
 
-    for v=1:size(result.edges,1)
-        edge = result.edges(v,:);
-        if (~isnan(result.vertices(edge(1))) && ~isnan(result.vertices(edge(2))))
-            final.faces = [final.faces; [result_size, edge(1), edge(2)]];
+    for v=1:size(result_1.edges,1)
+        edge = result_1.edges(v,:);
+        if (~isnan(result_1.vertices(edge(1))) && ~isnan(result_1.vertices(edge(2))))
+            final_1.faces = [final_1.faces; [result1_size, edge(1), edge(2)]];
+        end    
+    end
+    
+    result2_size = size(result_2.vertices,1);
+
+    for v=1:result2_size
+       if (~iscoplanar([pl_2.vertices; result_2.vertices(v,:)], 0.05) || any(any(pl_2.vertices==result_2.vertices(v,:),2)))
+          result_2.vertices(v,:) = NaN;
+       end
+    end
+
+    final_2.vertices = [result_2.vertices; center_2'];
+    final_2.faces = [];
+    result2_size = result2_size + 1;
+
+    for v=1:size(result_2.edges,1)
+        edge = result_2.edges(v,:);
+        if (~isnan(result_2.vertices(edge(1))) && ~isnan(result_2.vertices(edge(2))))
+            final_2.faces = [final_2.faces; [result2_size, edge(1), edge(2)]];
         end    
     end
 
-    %%  find the area of the intersection plane
+    %%  find the areas of the intersection planes
     %   and convert to mm^2
 
-    totarea = 0;
-    for i = 1:size(final.faces,1)
-        ID = [final.faces(i,1),final.faces(i,2),final.faces(i,3)];
-        tp = [final.vertices(ID(1),1:3); 
-              final.vertices(ID(2),1:3); 
-              final.vertices(ID(3),1:3)];
+    % 1 cm after ganglion
+    totarea_1 = 0;
+    for i = 1:size(final_1.faces,1)
+        ID = [final_1.faces(i,1),final_1.faces(i,2),final_1.faces(i,3)];
+        tp = [final_1.vertices(ID(1),1:3); 
+              final_1.vertices(ID(2),1:3); 
+              final_1.vertices(ID(3),1:3)];
         triarea = 1/2*norm(cross(tp(2,1:3)-tp(1,1:3),tp(3,1:3)-tp(1,1:3)));
-        totarea = totarea + triarea;
+        totarea_1 = totarea_1 + triarea;
     end
 
-    area = totarea*2*2; 
+    area_1 = totarea_1*2*2;
+    
+    % just after ganglion
+    totarea_2 = 0;
+    for i = 1:size(final_2.faces,1)
+        ID = [final_2.faces(i,1),final_2.faces(i,2),final_2.faces(i,3)];
+        tp = [final_2.vertices(ID(1),1:3); 
+              final_2.vertices(ID(2),1:3); 
+              final_2.vertices(ID(3),1:3)];
+        triarea = 1/2*norm(cross(tp(2,1:3)-tp(1,1:3),tp(3,1:3)-tp(1,1:3)));
+        totarea_2 = totarea_2 + triarea;
+    end
+
+    area_2 = totarea_2*2*2;
     
     nerve.nerve = nv;
-    nerve.plane = pl;
-    nerve.intersect = final;
+    nerve.plane_1 = pl_1;
+    nerve.plane_2 = pl_2;
+    nerve.intersect_1 = final_1;
+    nerve.intersect_2 = final_2;
     nerve.caterpillar = ca;
 end
 

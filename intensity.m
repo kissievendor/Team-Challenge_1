@@ -32,13 +32,14 @@ function result = intensity(datapath, patientIds, varargin)
     n = length(patientIds);
     patients = loadpatient(datapath, patientIds, ["STIR", tracts]);
     
-    result = cell(n,1);
+    result = cell(n,2);
 
     for p=1:n
         patient = patients{p,1};    
         
         stir = patient{1,2}{1,1};
-        result{p} = cell(6,3);
+        result{p,1} = cell(6,3);
+        result{p,2} = cell(6,3);
     
         for t=2:7    
             mask = patient{1,2}{t,1};
@@ -73,22 +74,33 @@ function result = intensity(datapath, patientIds, varargin)
                 empty = true;
             end
             
-            %% Calculate the area after 1 cm
+            %% Calculate the areas
+            % area_1 is 1 cm after ganglion, area_2 just after ganglion
             
             if (~empty)
-                [area, nerve] = findarea(pts); 
-                if (area > 0)
-                    result{p}{t-1, 3} = area;
-                    drawnerve(patientIds(p), tract, nerve);
+                [area_1, area_2, nerve] = findarea(pts,tract); 
+                if (area_1 > 0)
+                    result{p,1}{t-1, 3} = area_1;
                 else
-                    result{p}{t-1, 3} = NaN; 
+                    result{p,1}{t-1, 3} = NaN; 
+                end
+                if (area_2 > 0)
+                    result{p,2}{t-1, 3} = area_2;
+                else
+                    result{p,2}{t-1, 3} = NaN; 
+                end
+                if (area_1 > 0 && area_2 > 0)
+                    drawnerve(patientIds(p), tract, nerve);
                 end
             else
-                result{p}{t-1, 3} = NaN; 
+                result{p,1}{t-1, 3} = NaN;
+                result{p,2}{t-1, 3} = NaN;
             end
 
-            result{p}{t-1, 1} = tract;
-            result{p}{t-1, 2} = patient{1,1}{t-1,4}(2);            
+            result{p,1}{t-1, 1} = tract;
+            result{p,2}{t-1, 1} = tract;
+            result{p,1}{t-1, 2} = patient{1,1}{t-1,4}(2); 
+            result{p,2}{t-1, 2} = patient{1,1}{t-1,4}(1);
         end
     end
     
