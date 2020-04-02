@@ -7,8 +7,7 @@ patients = loadpatient(datapath, patientIds, ["tracts", "MIP_or"]);
 clear i patstruct finalstruct
 
 %save txt?
-save=true;
-%save=false;
+save=false;
 
 %Patient indexes for ALS and MMN
 ALS_index = [1, 4, 8, 9, 10, 15, 21, 22, 23, 27, 29, 30, 31, 35, 36];
@@ -109,13 +108,11 @@ if isnan(tract)==1 %if no tract available
     warning('tract not available')
     calcAG = NaN;
     calcAG_1cm = NaN;
-    %define region of interest for activecontouring
-
 else
     tract = imresize3(tract,[448 170 448]);
     tract = imbinarize(tract,0.0001);
-    [tractstruct, ~] = getpatch([],tract,2);
-    [MIPstruct, slices] = getpatch(MIP,tract,2);
+    [tractstruct, ~] = getpatch([],tract,4);
+    [MIPstruct, slices] = getpatch(MIP,tract,4);
     if slices~=0
         % Create index slices for the new patches (e.g. slices 41 is now slices 1)
         slidx = [];
@@ -153,24 +150,24 @@ else
         %then take width of end of the nerve (aprox. 1cm after ganglion)
         %take width 5 pixels(1cm) upwards (aprox. after ganglion)
         top = nervesum(1:n);
-        top = mean(sort(top));
+        top = mean(top);
         bottom = nervesum(n+1:end);
-        bottom = mean(sort(bottom));
+        bottom = mean(bottom);
 
         % Problem with slice selection?
-        if length(nervesum) < 6 %so shorter than 1cm            
+        if length(nervesum) < 18 %so shorter than 1cm+margin         
             warning('nerve shorter than 1cm')
             calcAG = NaN;
             calcAG_1cm = NaN;
 
         elseif top < bottom
-            calcAG_1cm = nervesum(1)*pixdim(1); %closer to ganglion
-            calcAG = nervesum(6)*pixdim(1);
+            calcAG_1cm = mean(nervesum(1:5))*pixdim(1); 
+            calcAG = mean(nervesum(12:17))*pixdim(1);
 
         elseif top > bottom
             nervesum = flipud(nervesum);
-            calcAG_1cm = nervesum(1)*pixdim(1); %closer to ganglion
-            calcAG = nervesum(6)*pixdim(1);
+            calcAG_1cm = mean(nervesum(1:5))*pixdim(1); %closer to ganglion
+            calcAG = mean(nervesum(12:17));
         else
             warning('ganglion location inconclusive')
             calcAG = NaN;
