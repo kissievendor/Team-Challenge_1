@@ -26,8 +26,9 @@ function [output] = loadpatient(datapath, patients, load_nii)
         for n = load_nii 
             if n == "tracts"
                 tracts = true;
-            end 
-            nii{i,1} = niftiread(datapath + "\" + patient + "_" + n);
+            end
+            
+            nii{i,1} = readfile(datapath + "\" + patient + "_" + n, 'nifti'); 
             i = i + 1;
         end
 
@@ -35,8 +36,8 @@ function [output] = loadpatient(datapath, patients, load_nii)
 
         measurements_opts = delimitedTextImportOptions("NumVariables", 1, "Delimiter", ",", "VariableTypes", "double");
 
-        diameters = table2array(readtable(datapath + "\" + patient + "_diameter.txt", measurements_opts));
-        areas = table2array(readtable(datapath + "\" + patient + "_area.txt", measurements_opts));
+        diameters = table2array(readfile(datapath + "\" + patient + "_diameter.txt", 'measurement', measurements_opts));
+        areas = table2array(readfile(datapath + "\" + patient + "_area.txt", 'measurement', measurements_opts));
 
         coors_opts = delimitedTextImportOptions("NumVariables", 3, "Delimiter", "\t");
 
@@ -48,7 +49,7 @@ function [output] = loadpatient(datapath, patients, load_nii)
             nerves{i,3} = [diameters(i+i-1), diameters(i+i)];
             nerves{i,4} = [areas(i+i-1), areas(i+i)];
             if tracts
-                nerves{i,5} = niftiread(datapath + "\" + patient + "_tracts_" + nerve);
+                nerves{i,5} = readfile(datapath + "\" + patient + "_tracts_" + nerve, 'nifti'); 
             end
             i = i + 1;
         end
