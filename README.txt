@@ -2,10 +2,10 @@
 Calculation of nerve diameter and area
 
 ===============================================================================================================================
-The motivation for this project was to develope an automated algorithm that allows medical doctors to differentiate
+The motivation for this project was to develope an automated algorithm that allows to differentiate
 between amyotrophic lateral sclerosis (ALS) and multifocal motor neuropathy (MMN) of their patients. Based on an MRI
-data set, the area and diameter of nerves are determined which subsequently allows the MD to conclude the disease
-and apply the treatment appropriate to the disease.
+data set, the area and diameter of nerves are determined which subsequently allows to conclude the disease
+and apply the treatment appropriate to the disease. The algorithm is to be used for research purposes only.  
 
 The algorithm determines the diameter and area of the human nerves C5, C6 and C7 based on a data set of MRI-images.
 The locations of the calculated values are directly after the ganglion and 1cm along the nerve route.
@@ -46,16 +46,25 @@ Running the test
 	 e.g. result = intensity(datapath, 18:20, 'margin', 2);
 	*A combination of both, e.g.: result = intensity(datapath, 18:20, 'threshold', 0.33, 'margin', 2);
 
+    *Edge determines the amount of borderpixels around the region of interest (ROI) of a nerve. 
+     Increasing this will increase the patch size on which the active contour is done.
+
 *Run main.m
 
 *The results are stored as txt.files for each patient and are also accessible in the MATLAB Workspace in the
- variable result
+ variable areas and diameters.
 
 ===============================================================================================================================
 Files
 
 *main.m: the main file, giving the results of diameter and area calculation.
-*activecontouring.m: Create active contour mask of one nerve, and compute diameters
+*loadpatient.m: ...
+
+*diameter_struct.m: uses create_struct.m to output structure with diameters for all patients given the patientIds.
+*create_struct.m: uses activecontouring.m to output a structure with diameters for one patient given patients and p_nr.
+*activecontouring.m: active contour mask of one nerve, given a patient and compute diameters and extract manual diameter (if availble).
+ Note, each tract is resized to fit the size of the origional images. 
+*getpatch.m: used in activecontouring to create a region of interest around the specified nerve. 
 
 ===============================================================================================================================
 This algorithm was run in April 2020.
