@@ -47,5 +47,3 @@ p_str = strcat(sprintf('%03d',p_nr), '_diameter_calc.txt');
 arr_txt = table(arr_txt);
 writetable(arr_txt,p_str,'WriteVariableNames',0);
 end
-
-end
