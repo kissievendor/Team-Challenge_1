@@ -1,4 +1,4 @@
-function result = intensity(datapath, patientIds, varargin)
+function result = intensity(patients, patientIds, varargin)
 %INTENSITY Calculates the area of the nerves C5 to C7 using an intensity-based algorithm and plotting a 3D model of them.
  
 % Extra parameters
@@ -38,7 +38,7 @@ function result = intensity(datapath, patientIds, varargin)
           assert(isscalar(threshold) && threshold>=0 && threshold<=1, "Must be a value between 0 and 1");
           k = k+1;
         case 'margin'
-          margin = int8(varargin{k+1});
+          margin = double(int8(varargin{k+1}));
           assert(isscalar(margin) && margin>=0 && margin<11, "Must be an integer between 0 and 10");
           k = k+1;
       end
@@ -49,12 +49,17 @@ function result = intensity(datapath, patientIds, varargin)
     
     tracts = ["tracts_C5R", "tracts_C6R", "tracts_C7R", "tracts_C5L", "tracts_C6L", "tracts_C7L"];
     n = length(patientIds);
-    patients = loadpatient(datapath, patientIds, ["STIR", tracts]);
+%     patients = loadpatient(datapath, patientIds, ["STIR", tracts]);
     
     result = cell(n,2);
 
     for p=1:n
         patient = patients{p,1};    
+        nii = cell(7,1);
+        for c=1:7
+           nii{c} = patient{1,2}{c+2,1};
+        end
+        patient{1,2} = nii;
         
         stir = patient{1,2}{1,1};
         result{p,1} = cell(6,3);
@@ -66,7 +71,7 @@ function result = intensity(datapath, patientIds, varargin)
 
             [X,~,~] = size(mask);    
 
-            [mask, intensity_points] = rectmask(stir, mask, 1);
+            [mask, intensity_points] = rectmask(stir, mask, margin);
 
             mask = stir .* mask;
 

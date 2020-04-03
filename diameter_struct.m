@@ -1,4 +1,4 @@
-function [patstruct] = diameter_struct(patients, patientIds, edge)
+function [patstruct] = diameter_struct(patients, patientIds, varargin)
 % DIAMETER_STRUCT Calculates the diameter of the nerves using an active contour
 % algorithm and creates a structure in which the results are visable
 
@@ -21,6 +21,21 @@ function [patstruct] = diameter_struct(patients, patientIds, edge)
 addpath(pwd + "\active_contour");
 warning('off','MATLAB:delaunayTriangulation:DupPtsWarnId');
 warning('off','MATLAB:datetime:InvalidSystemTimeZone');
+
+edge = 4;
+    
+k=1;
+nVarargs = length(varargin);
+while (k<=nVarargs)
+  assert(ischar(varargin{k}), 'Incorrect input parameters')
+  switch lower(varargin{k})
+    case 'edge'
+      edge = double(int8(varargin{k+1}));
+      assert(isscalar(edge) && edge>=0, "Must be a positive integer");
+      k = k+1;
+  end
+  k = k+1;
+end
     
 clear i patstruct finalstruct
 

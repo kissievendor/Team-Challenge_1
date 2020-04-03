@@ -1,12 +1,9 @@
-datapath = "C:\Users\20194695\Documents\Team_Challenge\data";
-%patientIds = [1:16,17:36]; % IDs for original data
-patientIds = [34,37:52];
-patients = loadpatient(datapath, patientIds, ["tracts", "MIP_or", "STIR"]);
-result = intensity(datapath, 18:20, 'threshold', 0.33, 'margin', 2);
-%Please change result to e.g. areas
-%And check if everything is consistent!!!
+datapath = "C:\Users\s_nor\OneDrive\Medical Imaging\Team Challenge\Part 2\data";
+patientIds = 1:3;
 
+patients = loadpatient(datapath, patientIds, ...
+["tracts", "MIP_or", "STIR", "tracts_C5R", "tracts_C6R", "tracts_C7R", "tracts_C5L", "tracts_C6L", "tracts_C7L"]);
 
+areas = intensity(patients, patientIds, 'threshold', 0.33, 'margin', 2);
 
-edge = 4;
-diameters = diameter_struct(patients,patientIds,edge);
+diameters = diameter_struct(patients, patientIds, 'edge', 5);
