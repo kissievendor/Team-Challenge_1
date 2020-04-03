@@ -27,6 +27,8 @@ function result = intensity(patients, patientIds, varargin)
     
     %% Extra parameters
     threshold = 0.5;
+    margin = 1;
+    plot = false;
     
     k=1;
     nVarargs = length(varargin);
@@ -35,11 +37,15 @@ function result = intensity(patients, patientIds, varargin)
       switch lower(varargin{k})
         case 'threshold'
           threshold = varargin{k+1};
-          assert(isscalar(threshold) && threshold>=0 && threshold<=1, "Must be a value between 0 and 1");
+          assert(isscalar(threshold) && threshold>=0 && threshold<=1, "'threshold' must be a value between 0 and 1");
           k = k+1;
         case 'margin'
           margin = double(int8(varargin{k+1}));
-          assert(isscalar(margin) && margin>=0 && margin<11, "Must be an integer between 0 and 10");
+          assert(isscalar(margin) && margin>=0 && margin<11, "'margin' must be an integer between 0 and 10");
+          k = k+1;
+        case 'plot'
+          plot = varargin{k+1};
+          assert(islogical(plot), "'plot' must be a boolean");
           k = k+1;
       end
       k = k+1;
@@ -113,7 +119,7 @@ function result = intensity(patients, patientIds, varargin)
                     else
                         result{p,2}{t-1, 3} = NaN; 
                     end
-                    if (area_1 > 0 && area_2 > 0)
+                    if (area_1 > 0 && area_2 > 0 && plot)
                         drawnerve(patientIds(p), tract, nerve);
                     end
                 end

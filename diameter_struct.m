@@ -31,7 +31,7 @@ while (k<=nVarargs)
   switch lower(varargin{k})
     case 'edge'
       edge = double(int8(varargin{k+1}));
-      assert(isscalar(edge) && edge>=0, "Must be a positive integer");
+      assert(isscalar(edge) && edge>=0, "'edge' must be a positive integer");
       k = k+1;
   end
   k = k+1;
