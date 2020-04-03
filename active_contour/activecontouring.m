@@ -1,6 +1,5 @@
-%% activecontouring
 function [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm] = activecontouring(patient,nerve, edge)
-%ACTIVECONTOURING: Create active contour mask of one nerve, and compute diameters
+%ACTIVECONTOURING Create active contour mask of one nerve, and compute diameters.
    
     % Inputs:
     % patient: cell, from loadpatient.m

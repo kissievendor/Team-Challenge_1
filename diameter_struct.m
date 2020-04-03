@@ -1,6 +1,5 @@
 function [patstruct] = diameter_struct(patients, patientIds, varargin)
-% DIAMETER_STRUCT Calculates the diameter of the nerves using an active contour
-% algorithm and creates a structure in which the results are visable
+% DIAMETER_STRUCT Calculates the diameter of the nerves using an active contour algorithm and creates a structure in which the results are visable.
 
     % Input:
     % patients: Patients structure obtained with the function loadpatients --> This

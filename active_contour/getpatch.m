@@ -1,6 +1,5 @@
 function [patch, slices] = getpatch(image, mask, edge)
-% GETPATCH: Creates patch around the tractography which is our region of 
-% interest
+% GETPATCH Creates patch around the tractography which is our region of interest.
 
     % Input:
     % image: The MIP_or image as 448x170x448 matix

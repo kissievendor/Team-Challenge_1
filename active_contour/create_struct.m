@@ -1,6 +1,5 @@
-%% process nerves
 function [patstruct] = create_struct(patient, p_nr, edge)
-% CREATE_STRUCT: Processes all nerves of one patients and stores is in a patient struct
+% CREATE_STRUCT Processes all nerves of one patients and stores is in a patient struct.
 
     % Inputs: 
     % patient: cell, from loadpatient.m
