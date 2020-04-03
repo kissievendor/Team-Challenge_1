@@ -2,6 +2,7 @@
 Calculation of nerve diameter and area
 
 ===============================================================================================================================
+
 The motivation for this project was to develope an automated algorithm that allows researchers to differentiate
 between amyotrophic lateral sclerosis (ALS) and multifocal motor neuropathy (MMN) of their patients. Based on an MRI
 data set, the area and diameter of nerves are determined which subsequently allows the researcher to conclude the
@@ -16,6 +17,7 @@ These instructions will get you a copy of the project running on your local mach
 guide on how to deploy the project on your machine.
 
 ===============================================================================================================================
+
 Prerequisites
 
 *Install MATLAB R2019a or a later version of the program on your device.
@@ -64,6 +66,7 @@ Running the test
  variable result
 
 ===============================================================================================================================
+
 Files
 
 *activecontouring.m: Creates active contour mask of one nerve, and compute diameters.
@@ -107,10 +110,24 @@ Files
 
 *Surfaceintersection.m: Intersection of two surfaces.
 
-
 ===============================================================================================================================
+
 This algorithm was run in April 2020.
 
 The code was built in MATLAB R2019a.
 
 Group members: K. van den Berg, K. Koopman, A. Koop, S. Noordman, M. Romme, L. Staiger
+
+===============================================================================================================================
+
+References
+
+*iscoplanar.m: Brett Shoelson, Ph.D. (2014), brett.shoelson@mathworks.com
+	       Weisstein, Eric W. "Coplanar." From MathWorld--A Wolfram Web Resource.
+	       http://mathworld.wolfram.com/Coplanar.html
+	       Abbott, P. (Ed.). "In and Out: Coplanarity." Mathematica J. 9, 300-302, 2004.
+	       http://www.mathematica-journal.com/issue/v9i2/contents/Inout9-2/Inout9-2_3.html
+
+*Surfaceintersection.m: Jaroslaw Tuszynski (2020).
+ 			Surface Intersection (https://www.mathworks.com/matlabcentral/fileexchange/48613-surface-intersection),
+			MATLAB Central File Exchange. Retrieved April 3, 2020.
