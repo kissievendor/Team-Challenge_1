@@ -37,17 +37,21 @@ Running the test
 	*multiple patients in a row e.g. patients 1 to 16: areas = intensity(patients, 1:16);
 	*multiple patients that are not in a row: areas = intensity(patients, [1:5,23,29]);
 
-*Optional: determine further parameters such as threshold or margin for the area calculation.
+*Optional: determine further parameters
 	*Threshold determines the amount of pixels that are accounted as the nerve (higher threshold, less pixel
 	 accounted for nerve). Use a value between 0 and 1.
-	 e.g. result = intensity(18:20, 'threshold', 0.33);
+	 e.g. areas = intensity(patients, 18:20, 'threshold', 0.33);
 	*Margin changes the size of the region of interest (ROI). A larger margin leeds to more pixels that are
 	 checked whether they belong to the nerve. Use a low single digit value
-	 e.g. result = intensity(18:20, 'margin', 2);
-	*A combination of both, e.g.: result = intensity(18:20, 'threshold', 0.33, 'margin', 2);
+	 e.g. areas = intensity(patients, 18:20, 'margin', 2);
+    *Plot is a boolean with determines if the visualisation of the area calculations are shown (nerve with planes).
+     e.g. areas = intensity(patients, 18:20, 'plot', true);
+    
+	*A combination of both, e.g.: areas = intensity(patients, 18:20, 'threshold', 0.33, 'margin', 2);
 
     *Edge determines the amount of borderpixels around the region of interest (ROI) of a nerve. 
      Increasing this will increase the patch size on which the active contour is done.
+     e.g. diameters = diameter_struct(patients, 18:20, 'edge', 3);
 
 *Run main.m
 
