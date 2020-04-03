@@ -65,7 +65,7 @@ Running the test
 *Run main.m
 
 *The results are stored as txt.files for each patient and are also accessible in the MATLAB Workspace in the
- variable result
+ variables areas and diameters
 
 ===============================================================================================================================
 
