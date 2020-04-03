@@ -1,4 +1,4 @@
-datapath = "C:\Users\s_nor\OneDrive\Medical Imaging\Team Challenge\Part 2\data";
+datapath = "C:\path\to\data\folder";
 patientIds = 1:3;
 
 patients = loadpatient(datapath, patientIds, ...
