@@ -18,6 +18,10 @@ function [patstruct] = diameter_struct(patients, patientIds, edge)
     % patients. If the activecontour algorithm resulted in no/bad segmentation of the nerve 
     % it will display NaN.
 
+addpath(pwd + "\active_contour");
+warning('off','MATLAB:delaunayTriangulation:DupPtsWarnId');
+warning('off','MATLAB:datetime:InvalidSystemTimeZone');
+    
 clear i patstruct finalstruct
 
 patstruct = struct([]);
