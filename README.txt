@@ -37,7 +37,9 @@ Running the test
 *Determine which patient(s) should be analyzed, both for area and diameter.
 
 	*a single patient e.g. patientIds = 12;
+
 	*multiple patients in a row e.g. patients 1 to 16: patientIds = 1:16;
+
 	*multiple patients that are not in a row: patientIds = [1:5,23,29];
 
 *Optional: determine further parameters such as threshold or margin for the area calculation.
