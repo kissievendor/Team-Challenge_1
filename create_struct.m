@@ -1,27 +1,27 @@
 %% process nerves
-function [patstruct] = create_struct(patient, p_nr,save)
-%Processes all nerves of one patients and stores is in a patient struct
+function [patstruct] = create_struct(patient, p_nr, edge)
+% CREATE_STRUCT: Processes all nerves of one patients and stores is in a patient struct
 
-%Inputs: 
-% - patient: cell, from loadpatient.m
-% - p_nr: int, identifier of patient 
-% - save: bool, save diameter measurements as txt
-%Outputs:
-% - patstruct: 7x7 cell, with manual measurement, calculation and
-% percentage off per nerve, for after ganglion and 1cm after
+    % Inputs: 
+    % patient: cell, from loadpatient.m
+    % p_nr: int, identifier of patient 
+    % edge: the amount of borderpixels around the ROI. Increasing this will
+    % increase the patch size on which the active contour is done.
+    
+    % Outputs:
+    % patstruct: 7x7 cell, with manual measurement, calculation and
+    % percentage off per nerve, for after ganglion and 1cm after
+    % txt file: a .txt file in which all the measurements are shown
 
 patstruct = struct([]);
 
 tracts = ["C5R" "C6R" "C7R" "C5L" "C6L" "C7L"];
 
-disp('patient:')
-disp(p_nr)
-
 %create array for saving diameters as txt
 arr_txt = zeros(12,1);
 
 for i = 1:length(tracts)
-    [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm] = activecontouring(patient, tracts(i));
+    [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm] = activecontouring(patient, tracts(i), edge);
     patstruct{i+1,1}=tracts(i);
     patstruct{1,1}=strcat("patient_",string(p_nr));
     patstruct{1,2}='Just after ganglion';
@@ -42,10 +42,10 @@ for i = 1:length(tracts)
     arr_txt(2*i) = calcAG_1cm;
 end
 
-if save==true
-    p_str = strcat(sprintf('%03d',p_nr), '_diameter_calc.txt');
-    arr_txt = table(arr_txt);
-    writetable(arr_txt,p_str,'WriteVariableNames',0);
+
+p_str = strcat(sprintf('%03d',p_nr), '_diameter_calc.txt');
+arr_txt = table(arr_txt);
+writetable(arr_txt,p_str,'WriteVariableNames',0);
 end
 
 end

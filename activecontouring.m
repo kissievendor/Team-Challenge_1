@@ -1,15 +1,20 @@
 %% activecontouring
-function [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm] = activecontouring(patient,nerve)
-%Create active contour mask of one nerve, and compute diameters
-%Inputs:
-% - patient: cell, from loadpatient.m
-% - nerve: str, eg. 'C5R'
-%Outputs:
-% - afterGanglion: manual measured diameter after ganglion in mm 
-% - calcAG: calculated diameter after ganglion (estimated location) in mm
-% - afterGanglion_1cm: manual measured diameter 1cm after ganglion
-% - calcAG_1cm: calculated diameter 1cm after ganglion (estimated location)
-% in mm
+function [afterGanglion, calcAG, afterGanglion_1cm, calcAG_1cm] = activecontouring(patient,nerve, edge)
+%ACTIVECONTOURING: Create active contour mask of one nerve, and compute diameters
+   
+    % Inputs:
+    % patient: cell, from loadpatient.m
+    % nerve: str, eg. 'C5R'
+    % edge: the amount of borderpixels around the ROI. Increasing this will
+    % increase the patch size on which the active contour is done.
+    
+    
+    % Outputs:
+    % afterGanglion: manual measured diameter after ganglion in mm 
+    % calcAG: calculated diameter after ganglion (estimated location) in mm
+    % afterGanglion_1cm: manual measured diameter 1cm after ganglion
+    % calcAG_1cm: calculated diameter 1cm after ganglion (estimated location)
+    % in mm
 
 MIP = patient{1, 1}{1, 2}{2, 1};
 for i = 1:length(patient{1,1}{1,1})
@@ -25,10 +30,12 @@ if isnan(tract)==1
     calcAG = NaN;
     calcAG_1cm = NaN;
 else
+    % Resize the tract images to a size of 448x170x448 so they can 
+    % be used on the MIP_or images, which have a higher resolution
     tract = imresize3(tract,[448 170 448]);
     tract = imbinarize(tract,0.0001);
-    [tractstruct, ~] = getpatch([],tract,4);
-    [MIPstruct, slices] = getpatch(MIP,tract,4);
+    [tractstruct, ~] = getpatch([],tract,edge);
+    [MIPstruct, slices] = getpatch(MIP,tract,edge);
     if slices~=0
         % Create index slices for the new patches (e.g. slices 41 is now slices 1)
         slidx = [];
@@ -51,7 +58,9 @@ else
         bw = activecontour(MIP_slice, tract_slice, 20);
         %take largest object (e.g. remove single pixels/objects)
         bw = bwareafilt(bw,1);
-
+        
+        % Voxel spacing of the original MIP images, the resampled are
+        % 2mmx2mmx2mm
         pixdim = [0.75,1,0.75]; 
 
         stats = regionprops(bw, 'Orientation');
