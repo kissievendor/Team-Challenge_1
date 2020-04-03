@@ -2,10 +2,10 @@
 Calculation of nerve diameter and area
 
 ===============================================================================================================================
-The motivation for this project was to develope an automated algorithm that allows to differentiate
+The motivation for this project was to develope an automated algorithm that allows researchers to differentiate
 between amyotrophic lateral sclerosis (ALS) and multifocal motor neuropathy (MMN) of their patients. Based on an MRI
-data set, the area and diameter of nerves are determined which subsequently allows to conclude the disease
-and apply the treatment appropriate to the disease. The algorithm is to be used for research purposes only.  
+data set, the area and diameter of nerves are determined which subsequently allows the researcher to conclude the disease
+and lets the medical doctor apply the treatment appropriate to the disease.
 
 The algorithm determines the diameter and area of the human nerves C5, C6 and C7 based on a data set of MRI-images.
 The locations of the calculated values are directly after the ganglion and 1cm along the nerve route.
@@ -33,18 +33,18 @@ Running the test
 *Set datapath to the folder with the stored MRI data. e.g. datapath = "C:\Users\JohnDoe\Documents\MRI\data";
 
 *Determine which patient(s) should be analyzed with the second parameter of the function.
-	*a single patient e.g. with patientID 12:  result = intensity(datapath, 12);
-	*multiple patients in a row e.g. patients 1 to 16: result = intensity(datapath, 1:16);
-	*multiple patients that are not in a row: result = intensity(datapath, [1:5,23,29]);
+	*a single patient e.g. with patientID 12:  areas = intensity(patients, 12);
+	*multiple patients in a row e.g. patients 1 to 16: areas = intensity(patients, 1:16);
+	*multiple patients that are not in a row: areas = intensity(patients, [1:5,23,29]);
 
 *Optional: determine further parameters such as threshold or margin for the area calculation.
 	*Threshold determines the amount of pixels that are accounted as the nerve (higher threshold, less pixel
 	 accounted for nerve). Use a value between 0 and 1.
-	 e.g. result = intensity(datapath, 18:20, 'threshold', 0.33);
+	 e.g. result = intensity(18:20, 'threshold', 0.33);
 	*Margin changes the size of the region of interest (ROI). A larger margin leeds to more pixels that are
 	 checked whether they belong to the nerve. Use a low single digit value
-	 e.g. result = intensity(datapath, 18:20, 'margin', 2);
-	*A combination of both, e.g.: result = intensity(datapath, 18:20, 'threshold', 0.33, 'margin', 2);
+	 e.g. result = intensity(18:20, 'margin', 2);
+	*A combination of both, e.g.: result = intensity(18:20, 'threshold', 0.33, 'margin', 2);
 
     *Edge determines the amount of borderpixels around the region of interest (ROI) of a nerve. 
      Increasing this will increase the patch size on which the active contour is done.
